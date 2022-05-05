@@ -153,7 +153,7 @@ Next R
     'End If
     
     ' MsgBox ("Count = " & NG(1))
-    'CountGeo Geos, ArrGeo, CountG
+    CountGeo Geos, ArrGeo, CountG
     InOutAutoClose Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, ArrGeo
     
     LyrIN.Visible = False
@@ -232,11 +232,12 @@ J = 1
         If (I Mod 2 <> 0) Then
      '  If (CountG(j)) < i Then
             J = J + 1
+            ' TpsIn(I).CW = False
         End If
             TpsIn(I).OpNo = J + DOc
 
 
-            ' TpsIn(a).CW = True
+             ' TpsIn(I).CW = True
             
           ' If (N Mod 2 = 0) Then
             'TpsIn(i).SetStartPoint 800, 600

@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmMain 
-   Caption         =   "Cutting v-0.7"
+   Caption         =   "Cutting v-0.75"
    ClientHeight    =   6975
    ClientLeft      =   120
    ClientTop       =   465

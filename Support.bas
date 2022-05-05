@@ -48,18 +48,19 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
      namberG = NG(N)
      LyrIN.Visible = True
      
-      Set GeoIn = Drw.AutoClose(Geos(namberG).MinXL + (Geos(namberG).MaxXL - InX - Geos(namberG).MinXL), Geos(namberG).MinYL + (Geos(namberG).MaxYL - InY - Geos(namberG).MinYL), 0.01)
+      Set GeoIn = Drw.AutoClose(Geos(namberG).MaxXL - InX - 2, Geos(namberG).MaxYL - InY - 2, 0.01)
       GeoIn.SetLayer (LyrIN)
       GeoIn.SetStartPoint Geos(namberG).MaxXL - InX, Geos(namberG).MaxYL - InY
       GeoIn.ToolInOut = acamINSIDE
       GeoInOut.Add (GeoIn)
+      GeoIn.CW = True
 
     
     LyrIN.Visible = False
     LyrOUT.Visible = True
 
     
-       Set GeoIn = Drw.AutoClose(Geos(namberG).MinXL + (Geos(namberG).MaxXL - OutX - Geos(namberG).MinXL), Geos(namberG).MinYL + (Geos(namberG).MaxYL - OutY - Geos(namberG).MinYL), 0.01)
+       Set GeoIn = Drw.AutoClose(Geos(namberG).MaxXL - OutX - 2, Geos(namberG).MaxYL - OutY - 2, 0.01)
         GeoIn.SetLayer (LyrOUT)
         GeoIn.SetStartPoint Geos(namberG).MaxXL - OutX, Geos(namberG).MaxYL - OutY
         GeoIn.ToolInOut = acamOUTSIDE
@@ -83,7 +84,7 @@ For N = 1 To Geos.Count
         namberG = NG(N)
         CountG(NamberGeo) = N * 2
         geoLenght = geoLenght + Geos(namberG).Length * 2
-        If geoLenght > 1000 Then
+        If geoLenght > frmMain.TextBox7.Text Then
 
                 NamberGeo = NamberGeo + 1
                 geoLenght = 0
@@ -99,7 +100,7 @@ Public Function OrderGeo(Geos) As Integer()
 Dim GeoCol As Collection
 Dim tempArr() As Integer
 
-    Set GeoCol = SetCollection(Geos)
+    
     
 'With CreateObject("System.Collections.SortedList")
 'For Each it In GeoCol
@@ -114,21 +115,25 @@ Dim tempArr() As Integer
 'End With
 
 ' MsgBox "Count = " & GeoCol.Count
-ReDim tempArr(GeoCol.Count)
+
 
 If frmMain.OptionButton1.Value Then
-
-    SortX tempArr, GeoCol
+    
+     Set GeoCol = SetCollectionY(Geos)
+     ReDim tempArr(GeoCol.Count)
+     SortX tempArr, GeoCol
     
 ElseIf frmMain.OptionButton2.Value Then
-
+ 
+    Set GeoCol = SetCollectionX(Geos)
+    ReDim tempArr(GeoCol.Count)
     SortY tempArr, GeoCol
 
 End If
 
-' MsgBox "Count = " & Nx.Count & ", Nx(1) = " & Nx(1)
-
-'Output Array
+     
+    
     OrderGeo = tempArr
+    
 End Function
 

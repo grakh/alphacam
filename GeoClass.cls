@@ -9,11 +9,16 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
 ' GeoClass
 Private dInd As Integer
+Private dName As Integer
 Private dX As Double
 Private dY As Double
 
 Property Let Ind(dValue As Integer)
     dInd = dValue
+End Property
+
+Property Let Name(dValue As Integer)
+    dName = dValue
 End Property
 
 Property Let X(dValue As Double)
@@ -26,6 +31,10 @@ End Property
 
 Property Get Ind() As Integer
     Ind = dInd
+End Property
+
+Property Get Name() As Integer
+    Name = dName
 End Property
 
 Property Get X() As Double
