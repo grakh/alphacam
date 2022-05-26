@@ -48,25 +48,54 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
      namberG = NG(N)
      LyrIN.Visible = True
      
-      Set GeoIn = Drw.AutoClose(Geos(namberG).MaxXL - InX - 2, Geos(namberG).MaxYL - InY - 2, 0.01)
-      GeoIn.SetLayer (LyrIN)
-      GeoIn.SetStartPoint Geos(namberG).MaxXL - InX, Geos(namberG).MaxYL - InY
-      GeoIn.ToolInOut = acamINSIDE
-      GeoInOut.Add (GeoIn)
-      GeoIn.CW = True
-
+     If frmMain.OptionButton4.Value Then
+     
+          Set GeoIn = Drw.AutoClose( _
+            Geos(namberG).MaxXL - (Geos(namberG).MaxXL - Geos(namberG).MinXL) / 2, _
+            Geos(namberG).MaxYL - (Geos(namberG).MaxYL - Geos(namberG).MinYL) / 2, 0.01)
+          GeoIn.SetLayer (LyrIN)
+          GeoIn.SetStartPoint Geos(namberG).MaxXL - InX, Geos(namberG).MaxYL - InY
+          GeoIn.ToolInOut = acamINSIDE
+          GeoInOut.Add (GeoIn)
+          GeoIn.CW = True
     
-    LyrIN.Visible = False
-    LyrOUT.Visible = True
-
-    
-       Set GeoIn = Drw.AutoClose(Geos(namberG).MaxXL - OutX - 2, Geos(namberG).MaxYL - OutY - 2, 0.01)
-        GeoIn.SetLayer (LyrOUT)
-        GeoIn.SetStartPoint Geos(namberG).MaxXL - OutX, Geos(namberG).MaxYL - OutY
-        GeoIn.ToolInOut = acamOUTSIDE
-        GeoIn.CW = False
         
-        GeoInOut.Add (GeoIn)
+            LyrIN.Visible = False
+            LyrOUT.Visible = True
+    
+        
+           Set GeoIn = Drw.AutoClose( _
+            Geos(namberG).MaxXL - (Geos(namberG).MaxXL - Geos(namberG).MinXL) / 2, _
+            Geos(namberG).MaxYL - (Geos(namberG).MaxYL - Geos(namberG).MinYL) / 2, 0.01)
+           GeoIn.SetLayer (LyrOUT)
+           GeoIn.SetStartPoint Geos(namberG).MaxXL - OutX, Geos(namberG).MaxYL - OutY
+           GeoIn.ToolInOut = acamOUTSIDE
+           GeoIn.CW = False
+           GeoInOut.Add (GeoIn)
+     
+     Else:
+     
+          Set GeoIn = Drw.AutoClose(Geos(namberG).MaxXL - InX - 3, Geos(namberG).MaxYL - InY - 3, 0.01)
+          GeoIn.SetLayer (LyrIN)
+          GeoIn.SetStartPoint Geos(namberG).MaxXL - InX, Geos(namberG).MaxYL - InY
+          GeoIn.ToolInOut = acamINSIDE
+          GeoInOut.Add (GeoIn)
+          GeoIn.CW = True
+    
+        
+            LyrIN.Visible = False
+            LyrOUT.Visible = True
+    
+        
+           Set GeoIn = Drw.AutoClose(Geos(namberG).MaxXL - OutX - 3, Geos(namberG).MaxYL - OutY - 3, 0.01)
+           GeoIn.SetLayer (LyrOUT)
+           GeoIn.SetStartPoint Geos(namberG).MaxXL - OutX, Geos(namberG).MaxYL - OutY
+           GeoIn.ToolInOut = acamOUTSIDE
+           GeoIn.CW = False
+           GeoInOut.Add (GeoIn)
+        
+    End If
+        
     
     LyrOUT.Visible = False
     
@@ -94,11 +123,12 @@ For N = 1 To Geos.Count
     Next N
 End Sub
 
-Public Function OrderGeo(Geos) As Integer()
+Public Function OrderGeo(Geos, PathXYLen) As Integer()
 
 
 Dim GeoCol As Collection
 Dim tempArr() As Integer
+Dim var As Collection
 
     
     
@@ -121,16 +151,21 @@ If frmMain.OptionButton1.Value Then
     
      Set GeoCol = SetCollectionY(Geos)
      ReDim tempArr(GeoCol.Count)
-     SortX tempArr, GeoCol
+     Set var = SortX(GeoCol, PathXYLen)
     
 ElseIf frmMain.OptionButton2.Value Then
  
     Set GeoCol = SetCollectionX(Geos)
     ReDim tempArr(GeoCol.Count)
-    SortY tempArr, GeoCol
+    Set var = SortY(GeoCol, PathXYLen)
 
 End If
 
+    For B = 1 To var.Count
+
+        tempArr(B) = var(B).Name
+        
+    Next B
      
     
     OrderGeo = tempArr

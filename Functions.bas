@@ -1,6 +1,6 @@
 Attribute VB_Name = "Functions"
 
-Public Function SortY(tempArr, GeoCol)
+Public Function SortY(GeoCol, PathXYLen)
 
     Dim TempX, TempY As Double
     Dim S As Integer
@@ -10,7 +10,7 @@ Public Function SortY(tempArr, GeoCol)
     Dim oldGeo As Collection
 
     Set oldGeo = GeoCol
-
+T = 1
     For J = 1 To oldGeo.Count
         TempY = 1000
         For Each Y In oldGeo
@@ -20,30 +20,30 @@ Public Function SortY(tempArr, GeoCol)
         Next Y
         ' MsgBox "temp = " & TempY
         m = 0
+        
         For Each a In oldGeo
         m = m + 1
+        
             If CInt(a.Y) = TempY Then
             ' MsgBox "temp = " & TempX & " m = " & m
                 S = S + 1
+
                 var.Add a
                 var(S).Ind = S
                 oldGeo.Remove m
                 m = m - 1
             End If
         Next a
-
+        PathXYLen(T) = S
+        T = 2
      ' MsgBox "Ind = " & var(J).Ind & ", Name = " & var(J).Name
     Next J
     
-    For B = 1 To var.Count
-
-        tempArr(B) = var(B).Name
-        
-    Next B
+    Set SortY = var
   
 End Function
 
-Public Function SortX(tempArr, GeoCol)
+Public Function SortX(GeoCol, PathXYLen)
 
     Dim TempX, TempY As Double
     Dim S As Integer
@@ -53,7 +53,7 @@ Public Function SortX(tempArr, GeoCol)
     Dim oldGeo As Collection
 
     Set oldGeo = GeoCol
-
+T = 1
     For J = 1 To oldGeo.Count
         TempX = 1000
         For Each X In oldGeo
@@ -63,26 +63,26 @@ Public Function SortX(tempArr, GeoCol)
         Next X
         ' MsgBox "temp = " & TempY
         m = 0
+        
         For Each a In oldGeo
         m = m + 1
+        
             If CInt(a.X) = TempX Then
             ' MsgBox "temp = " & TempX & " m = " & m
                 S = S + 1
+                
                 var.Add a
                 var(S).Ind = S
                 oldGeo.Remove m
                 m = m - 1
             End If
         Next a
-
+        PathXYLen(T) = S
+        T = 2
      ' MsgBox "Ind = " & var(J).Ind & ", Name = " & var(J).Name
     Next J
     
-    For B = 1 To var.Count
-
-        tempArr(B) = var(B).Name
-        
-    Next B
+    Set SortX = var
     
 End Function
 
@@ -120,6 +120,7 @@ Public Function SetCollectionX(Geos) As Collection
         Next X
         'MsgBox "temp = " & TempX
         m = 0
+        
         For Each a In oldGeos
         m = m + 1
             If CInt(a.X) = TempX Then
@@ -130,6 +131,7 @@ Public Function SetCollectionX(Geos) As Collection
                 oldGeos.Remove m
                 m = m - 1
             End If
+
         Next a
 
      ' MsgBox "Ind = " & var(J).Ind & ", Name = " & var(J).Name
@@ -173,16 +175,19 @@ Public Function SetCollectionY(Geos) As Collection
         Next Y
         'MsgBox "temp = " & TempX
         m = 0
+
         For Each a In oldGeos
         m = m + 1
             If CInt(a.Y) = TempY Then
             ' MsgBox "temp = " & TempX & " m = " & m
                 S = S + 1
+
                 var.Add a
                 var(S).Ind = S
                 oldGeos.Remove m
                 m = m - 1
             End If
+
         Next a
 
      ' MsgBox "Ind = " & var(J).Ind & ", Name = " & var(J).Name

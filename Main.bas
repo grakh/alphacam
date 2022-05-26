@@ -11,11 +11,13 @@ Public Function CreatePrimitive( _
     Dim GeoInOut, GeoRev As Paths
     Dim ret As String
     Dim Geos As Paths
-    
-    
-    Collection Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG
+    Dim PathXYLen(2) As Integer
+    Dim Text6count As Integer
 
-    Mill Drw, Geos.Count, LyrIN, LyrOUT, NG, GeoInOut, CountG
+    
+    Collection Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen
+
+    Mill Drw, Geos.Count, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen
     
   'MsgBox ("N = " & Drw.Operations.Item(1).Number)
    Drw.Operations.Item(Drw.Operations.Count).Delete
@@ -93,13 +95,14 @@ Private Sub GetMillTool(Name As String, Comb As String) ' Name of tool, eg "Flat
 End Sub
 
 
-Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG)
+Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen)
 
     Dim Geo As Path
     Dim GeoIn, GeoOut As Path
     Dim rev, res As Boolean
     Dim J, J1 As Integer
     Dim ArrGeo() As Integer
+    Dim Chet As Double
     
     
     Set GeoInOut = Drw.CreatePathCollection
@@ -122,7 +125,7 @@ NG(0) = 0
 CountG(0) = 0
 NamberGeo = 1
 
-ArrGeo = OrderGeo(Geos)
+ArrGeo = OrderGeo(Geos, PathXYLen)
 For Each R In ArrGeo
 
   ' MsgBox ("ArrGeo = " & R)
@@ -162,8 +165,8 @@ Next R
     
 End Sub
 
-Public Sub Mill(Drw, GeosCount, LyrIN, LyrOUT, NG, GeoInOut, CountG)
-Dim J, a, DOc As Integer
+Public Sub Mill(Drw, GeosCount, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen)
+Dim J, a, DOc, D As Integer
 Dim PathLen As Double
 
   GetMillTool frmMain.ComboBox2.Text, frmMain.ComboBox1.Text
@@ -212,7 +215,7 @@ Drw.SetLayer Nothing
  'LyrIN.Geometries.Selected = True
  'LyrOUT.Geometries.Selected = True
     GeoInOut.Selected = True
-'MsgBox ("GeoInOut = " & GeoInOut.Count)
+' MsgBox ("PathXYLen = " & PathXYLen(1))
 
 Set TpsIn = MD.RoughFinish
 
@@ -226,15 +229,50 @@ Set TpsIn = MD.RoughFinish
 
 J = 1
 
+' If frmMain.OptionButton3.Value Then J = 0
+Chet = PathXYLen(1) / frmMain.TextBox6.Value
+
+If PathXYLen(1) Mod Chet = 0 Then
+    Text6count = 0
+Else: Text6count = Fix(Chet) * frmMain.TextBox6.Value
+End If
+
+' MsgBox ("Text6count = " & Text6count & " Chet = " & Fix(Chet))
         ' Apply lead-in/out on the new tool paths
     For I = 1 To TpsIn.Count
     
-        If (I Mod 2 <> 0) Then
-     '  If (CountG(j)) < i Then
-            J = J + 1
-            ' TpsIn(I).CW = False
+        If frmMain.OptionButton4.Value Then
+            If (CountG(J)) < I Then
+                J = J + 1
+            End If
+        Else:
+            If (I Mod 2 <> 0) Then
+                If Text6count <> 0 Then
+                    If T = PathXYLen(1) Then
+                        J = J + 1
+                        T = 1
+                        D = 0
+                        Else: T = T + 1
+                    End If
+                 
+                    If D = frmMain.TextBox6.Value Then
+                        If T < Text6count Then J = J + 1
+                        D = 0
+                    End If
+                Else:
+                        If D = frmMain.TextBox6.Value Then
+                            J = J + 1
+                            D = 0
+                        End If
+                End If
+                D = D + 1
+              
+            End If
+            
         End If
-            TpsIn(I).OpNo = J + DOc
+
+        
+        TpsIn(I).OpNo = J + DOc
 
 
              ' TpsIn(I).CW = True
