@@ -48,8 +48,8 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
      namberG = NG(N)
      LyrIN.Visible = True
      
-     If frmMain.OptionButton4.Value Then
-     
+     ' If frmMain.OptionButton4.Value Then
+     If False Then
           Set GeoIn = Drw.AutoClose( _
             Geos(namberG).MaxXL - (Geos(namberG).MaxXL - Geos(namberG).MinXL) / 2, _
             Geos(namberG).MaxYL - (Geos(namberG).MaxYL - Geos(namberG).MinYL) / 2, 0.01)
@@ -102,18 +102,23 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
     Next N
 End Sub
 
-Public Sub CountGeo(Geos, NG, CountG)
+Public Sub CountGeo(Geos, NG, CountG, GeoMax)
 
     Dim geoLenght As Double
-    Dim NamberGeo, N, namberG As Integer
+    Dim NamberGeo, N, namberG, temp As Integer
+    NamberGeo = 1
 
+  
 For N = 1 To Geos.Count
         ' N = N + 1
-' MsgBox ("Count = " & NG(N))
+
         namberG = NG(N)
+      ' MsgBox ("Geos = " & Round(vars(namberG).Y) & "GeoMax = " & Round(GeoMax))
+      If frmMain.OptionButton2.Value Then temp = Round(Geos(namberG).MinYL) Else temp = Round(Geos(namberG).MinXL)
+      
         CountG(NamberGeo) = N * 2
         geoLenght = geoLenght + Geos(namberG).Length * 2
-        If geoLenght > frmMain.TextBox7.Text Then
+        If geoLenght > frmMain.TextBox7.Text Or temp >= Round(GeoMax) Then
 
                 NamberGeo = NamberGeo + 1
                 geoLenght = 0
@@ -129,6 +134,8 @@ Public Function OrderGeo(Geos, PathXYLen) As Integer()
 Dim GeoCol As Collection
 Dim tempArr() As Integer
 Dim var As Collection
+Dim check As Boolean
+
 
     
     
@@ -145,15 +152,16 @@ Dim var As Collection
 'End With
 
 ' MsgBox "Count = " & GeoCol.Count
+If frmMain.CheckBox1.Value Then check = frmMain.OptionButton1.Value Else check = frmMain.OptionButton2.Value
+' If frmMain.CheckBox1.Value = False And CInt(frmMain.TextBox6.Value) > 1 Then check = Not check
 
-
-If frmMain.OptionButton1.Value Then
+If check Then
     
      Set GeoCol = SetCollectionY(Geos)
      ReDim tempArr(GeoCol.Count)
      Set var = SortX(GeoCol, PathXYLen)
     
-ElseIf frmMain.OptionButton2.Value Then
+Else:
  
     Set GeoCol = SetCollectionX(Geos)
     ReDim tempArr(GeoCol.Count)

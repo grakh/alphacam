@@ -7,20 +7,20 @@ Public Function CreatePrimitive( _
     Dim Drw As Drawing
     Set Drw = App.ActiveDrawing
     Dim LyrIN, LyrOUT, Lyr As Layer
-    Dim NG(60), CountG(60) As Integer
+    Dim NG(100), CountG(100) As Integer
     Dim GeoInOut, GeoRev As Paths
     Dim ret As String
     Dim Geos As Paths
     Dim PathXYLen(2) As Integer
-    Dim Text6count As Integer
-
+    Dim Text6count, GeoMax As Integer
+    PathXYLen(1) = 1
     
-    Collection Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen
+    Collection Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax
 
-    Mill Drw, Geos.Count, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen
+    Mill Drw, Geos.Count, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax
     
   'MsgBox ("N = " & Drw.Operations.Item(1).Number)
-   Drw.Operations.Item(Drw.Operations.Count).Delete
+    Drw.Operations.Item(Drw.Operations.Count).Delete ' для черновой
  
     ' Drw.Options.ShowRapids = False
     ' Drw.ThreeDViews = True
@@ -81,7 +81,7 @@ Private Sub GetMillTool(Name As String, Comb As String) ' Name of tool, eg "Flat
     ' Enable error handling
     On Error Resume Next
     ' Try to select given tool
-    App.SelectTool App.LicomdatPath & "LICOMDAT\MTOOLS.ALP\GVM_TOOLS\STD_D" & Comb & "base" & Name & "°.AMT"
+    App.SelectTool App.LicomdatPath & "LICOMDAT\MTools.Alp\GVM_TOOLS\STD_D" & Comb & "base" & Name & "°.AMT"
     If Err.Number <> 0 Then
         ' Failed so ask user
         Err.Clear
@@ -95,7 +95,7 @@ Private Sub GetMillTool(Name As String, Comb As String) ' Name of tool, eg "Flat
 End Sub
 
 
-Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen)
+Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax)
 
     Dim Geo As Path
     Dim GeoIn, GeoOut As Path
@@ -103,6 +103,8 @@ Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen)
     Dim J, J1 As Integer
     Dim ArrGeo() As Integer
     Dim Chet As Double
+
+    
     
     
     Set GeoInOut = Drw.CreatePathCollection
@@ -131,6 +133,16 @@ For Each R In ArrGeo
   ' MsgBox ("ArrGeo = " & R)
 Next R
 
+
+For Each it In Geos
+    If frmMain.OptionButton1.Value Then
+        If it.MinXL > GeoMax Then GeoMax = it.MinXL
+    Else:
+        If it.MinYL > GeoMax Then GeoMax = it.MinYL
+    End If
+Next
+' MsgBox "GeoMaxX = " & GeoMaxX & "GeoMaxY = " & GeoMaxY
+
   'If Geos.Count > 2 Then
   '      If Geos(1).MinYL > Geos(2).MinYL Then rev = True
         
@@ -156,7 +168,7 @@ Next R
     'End If
     
     ' MsgBox ("Count = " & NG(1))
-    CountGeo Geos, ArrGeo, CountG
+    CountGeo Geos, ArrGeo, CountG, GeoMax
     InOutAutoClose Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, ArrGeo
     
     LyrIN.Visible = False
@@ -165,8 +177,8 @@ Next R
     
 End Sub
 
-Public Sub Mill(Drw, GeosCount, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen)
-Dim J, a, DOc, D As Integer
+Public Sub Mill(Drw, GeosCount, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax)
+Dim J, a, DOc, D, K As Integer
 Dim PathLen As Double
 
   GetMillTool frmMain.ComboBox2.Text, frmMain.ComboBox1.Text
@@ -175,6 +187,8 @@ Dim PathLen As Double
  Dim TpsIn, TpsOut As Paths
  Dim LD As LeadData
  Dim MD As MillData
+ Dim check, flag As Boolean
+ flag = False
 
  ' get a suboperation
 
@@ -226,7 +240,7 @@ Set TpsIn = MD.RoughFinish
 ' Set TpsOut = MD.RoughFinish
 
  Drw.SetLayer Nothing
-
+ 
 J = 1
 
 ' If frmMain.OptionButton3.Value Then J = 0
@@ -237,16 +251,24 @@ If PathXYLen(1) Mod Chet = 0 Then
 Else: Text6count = Fix(Chet) * frmMain.TextBox6.Value
 End If
 
-' MsgBox ("Text6count = " & Text6count & " Chet = " & Fix(Chet))
+check = frmMain.CheckBox1.Value
+'If frmMain.CheckBox1.Value = False And CInt(frmMain.TextBox6.Value) > 1 Then
+'    check = True
+'    flag = True
+'End If
+
+    ' MsgBox ("TpsIn = " & TpsIn.Count & " vars = " & vars.Count)
         ' Apply lead-in/out on the new tool paths
     For I = 1 To TpsIn.Count
-    
-        If frmMain.OptionButton4.Value Then
+
+        If check = False Then
+        ' If frmMain.OptionButton4.Value Then
+        ' MsgBox ("Geos = " & vars(K).X & " GeoMaxX = " & GeoMaxX)
             If (CountG(J)) < I Then
                 J = J + 1
             End If
         Else:
-            If (I Mod 2 <> 0) Then
+             If (I Mod 2 <> 0) Then
                 If Text6count <> 0 Then
                     If T = PathXYLen(1) Then
                         J = J + 1
@@ -255,12 +277,13 @@ End If
                         Else: T = T + 1
                     End If
                  
-                    If D = frmMain.TextBox6.Value Then
+                    If D = CInt(frmMain.TextBox6.Value) Then
                         If T < Text6count Then J = J + 1
                         D = 0
+                        ' If flag Then J = 0
                     End If
                 Else:
-                        If D = frmMain.TextBox6.Value Then
+                        If D = CInt(frmMain.TextBox6.Value) Then
                             J = J + 1
                             D = 0
                         End If
@@ -271,18 +294,9 @@ End If
             
         End If
 
-        
+
         TpsIn(I).OpNo = J + DOc
 
-
-             ' TpsIn(I).CW = True
-            
-          ' If (N Mod 2 = 0) Then
-            'TpsIn(i).SetStartPoint 800, 600
-            'TpsIn(i).SetLeadInOutAuto acamLeadBOTH, acamLeadBOTH, 1, 1, 45, False, False, 0
-
-            ' TpsOut(i).OpNo = j + DOc
-            ' TpsOut(a).CW = False
           
      Next I
      
@@ -290,7 +304,7 @@ End If
         'LyrIN.Geometries.Selected = True
         'LyrOUT.Geometries.Selected = True
         GeoInOut.Selected = True
-        MD.OpNo = J + DOc + 1
+        MD.OpNo = J + DOc + 1  ' ??? ????????
 
      'MDin.RoughFinishUsePreviousMachining = True
         MD.RoughFinish
@@ -299,3 +313,12 @@ End If
     'LyrOUT.Visible = False
     
 End Sub
+
+Function BeforeRoughFinish()
+
+    Do While S > 1000000
+    S = S + 1
+    Loop
+
+ End Function
+

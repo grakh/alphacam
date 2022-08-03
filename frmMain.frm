@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmMain 
-   Caption         =   "Cutting v-0.8"
+   Caption         =   "Cutting v-0.9"
    ClientHeight    =   6975
    ClientLeft      =   120
    ClientTop       =   465
@@ -25,13 +25,23 @@ Private Sub btOk_Click()
 End Sub
 
 Private Sub OptionButton3_Click()
-    TextBox6.Enabled = True
-    TextBox7.Enabled = False
+   ' TextBox6.Enabled = True
+   ' TextBox7.Enabled = False
 End Sub
 
 Private Sub OptionButton4_Click()
-    TextBox6.Enabled = False
-    TextBox7.Enabled = True
+   ' TextBox6.Enabled = False
+   ' TextBox7.Enabled = True
+End Sub
+
+Private Sub CheckBox1_Click()
+    If CheckBox1.Value = True Then
+        TextBox6.Enabled = True
+        TextBox7.Enabled = False
+    Else:
+        TextBox6.Enabled = False
+        TextBox7.Enabled = True
+    End If
 End Sub
 
 Private Sub UserForm_Initialize()
@@ -47,5 +57,8 @@ Private Sub UserForm_Initialize()
   ComboBox2.AddItem "50"
   ComboBox2.AddItem "75"
   ComboBox2.AddItem "100"
+  
+  TextBox6.Enabled = False
+  TextBox7.Enabled = True
   
 End Sub
