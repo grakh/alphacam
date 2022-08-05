@@ -1,6 +1,6 @@
 Attribute VB_Name = "Functions"
 
-Public Function SortY(GeoCol, PathXYLen)
+Public Function SortY(GeoCol, PathXYLen, delta)
 
     Dim TempX, TempY As Double
     Dim S As Integer
@@ -24,7 +24,7 @@ T = 1
         For Each a In oldGeo
         m = m + 1
         
-            If CInt(a.Y) = TempY Then
+            If ((TempY - delta) < CInt(a.Y) And CInt(a.Y) < (TempY + delta)) Then
             ' MsgBox "temp = " & TempX & " m = " & m
                 S = S + 1
 
@@ -43,7 +43,7 @@ T = 1
   
 End Function
 
-Public Function SortX(GeoCol, PathXYLen)
+Public Function SortX(GeoCol, PathXYLen, delta)
 
     Dim TempX, TempY As Double
     Dim S As Integer
@@ -67,7 +67,7 @@ T = 1
         For Each a In oldGeo
         m = m + 1
         
-            If CInt(a.X) = TempX Then
+            If ((TempX - delta) < CInt(a.X) And CInt(a.X) < (TempX + delta)) Then
             ' MsgBox "temp = " & TempX & " m = " & m
                 S = S + 1
                 
@@ -86,7 +86,7 @@ T = 1
     
 End Function
 
-Public Function SetCollectionX(Geos) As Collection
+Public Function SetCollectionX(Geos, delta) As Collection
 
     Dim MyRecord As New GeoClass
     Dim TempX, TempY As Double
@@ -123,7 +123,7 @@ Public Function SetCollectionX(Geos) As Collection
         
         For Each a In oldGeos
         m = m + 1
-            If CInt(a.X) = TempX Then
+            If ((TempX - delta) < CInt(a.X) And CInt(a.X) < (TempX + delta)) Then
             ' MsgBox "temp = " & TempX & " m = " & m
                 S = S + 1
                 var.Add a
@@ -141,7 +141,7 @@ Public Function SetCollectionX(Geos) As Collection
     
 End Function
 
-Public Function SetCollectionY(Geos) As Collection
+Public Function SetCollectionY(Geos, delta) As Collection
 
     Dim MyRecord As New GeoClass
     Dim TempX, TempY As Double
@@ -178,7 +178,7 @@ Public Function SetCollectionY(Geos) As Collection
 
         For Each a In oldGeos
         m = m + 1
-            If CInt(a.Y) = TempY Then
+            If ((TempY - delta) < CInt(a.Y) And CInt(a.Y) < (TempY + delta)) Then
             ' MsgBox "temp = " & TempX & " m = " & m
                 S = S + 1
 

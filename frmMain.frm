@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmMain 
-   Caption         =   "Cutting v-0.9"
-   ClientHeight    =   6975
+   Caption         =   "Cutting v-1.0"
+   ClientHeight    =   7020
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   5985
+   ClientWidth     =   5955
    OleObjectBlob   =   "frmMain.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -36,12 +36,54 @@ End Sub
 
 Private Sub CheckBox1_Click()
     If CheckBox1.Value = True Then
-        TextBox6.Enabled = True
+        Frame5.Caption = "Элементов в одной программе"
         TextBox7.Enabled = False
     Else:
-        TextBox6.Enabled = False
+        Frame5.Caption = "Программ в одной линии"
         TextBox7.Enabled = True
     End If
+End Sub
+
+Private Sub TextBox10_Change()
+If IsNumeric(TextBox10.Value) = False Then TextBox10.Value = ""
+End Sub
+
+Private Sub TextBox11_Change()
+If IsNumeric(TextBox11.Value) = False Then TextBox11.Value = ""
+End Sub
+
+Private Sub TextBox2_Change()
+If IsNumeric(TextBox2.Value) = False Then TextBox2.Value = ""
+End Sub
+
+Private Sub TextBox3_Change()
+If IsNumeric(TextBox3.Value) = False Then TextBox3.Value = ""
+End Sub
+
+Private Sub TextBox4_Change()
+If IsNumeric(TextBox4.Value) = False Then TextBox4.Value = ""
+End Sub
+
+Private Sub TextBox5_Change()
+If IsNumeric(TextBox5.Value) = False Then TextBox5.Value = ""
+End Sub
+
+Private Sub TextBox6_Change()
+If IsNumeric(TextBox6.Value) = False Then TextBox6.Value = ""
+End Sub
+
+Private Sub TextBox7_Change()
+If IsNumeric(TextBox7.Value) = False Then TextBox7.Value = ""
+End Sub
+
+Private Sub TextBox8_Change()
+If IsNumeric(TextBox8.Value) = False Then TextBox8.Value = ""
+
+
+End Sub
+
+Private Sub TextBox9_Change()
+If IsNumeric(TextBox9.Value) = False Then TextBox9.Value = ""
 End Sub
 
 Private Sub UserForm_Initialize()
@@ -58,7 +100,9 @@ Private Sub UserForm_Initialize()
   ComboBox2.AddItem "75"
   ComboBox2.AddItem "100"
   
-  TextBox6.Enabled = False
+  ' TextBox6.Enabled = False
   TextBox7.Enabled = True
+  TextBox8.MaxLength = 2
+  TextBox10.MaxLength = 2
   
 End Sub

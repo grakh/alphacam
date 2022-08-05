@@ -104,27 +104,39 @@ End Sub
 
 Public Sub CountGeo(Geos, NG, CountG, GeoMax)
 
-    Dim geoLenght As Double
-    Dim NamberGeo, N, namberG, temp As Integer
+    Dim geoLenght, GeoMaxCount As Double
+    Dim NamberGeo, N, namberG, temp, delta, countP As Integer
+    Dim flag As Boolean
+    flag = frmMain.OptionButton2.Value
     NamberGeo = 1
 
+    delta = Round(Geos(1).MaxYL - Geos(1).MinYL) - 1
+    If flag Then delta = Round(Geos(1).MaxYL - Geos(1).MinYL) - 1 Else delta = Round(Geos(1).MaxXL - Geos(1).MinXL) - 1
+    countP = CInt(frmMain.TextBox6.Value)
+    
+    GeoMaxCount = GeoMax / countP
+  ' MsgBox ("geoMax = " & geoMax & " GeoMaxCount = " & GeoMaxCount)
   
 For N = 1 To Geos.Count
         ' N = N + 1
+        
 
         namberG = NG(N)
-      ' MsgBox ("Geos = " & Round(vars(namberG).Y) & "GeoMax = " & Round(GeoMax))
-      If frmMain.OptionButton2.Value Then temp = Round(Geos(namberG).MinYL) Else temp = Round(Geos(namberG).MinXL)
-      
+      If flag Then temp = Round(Geos(namberG).MinYL) Else temp = Round(Geos(namberG).MinXL)
+
         CountG(NamberGeo) = N * 2
         geoLenght = geoLenght + Geos(namberG).Length * 2
-        If geoLenght > frmMain.TextBox7.Text Or temp >= Round(GeoMax) Then
+        ' MsgBox ("temp = " & temp & " GeoMax = " & GeoMaxCount)
 
+        If geoLenght > CInt(frmMain.TextBox7.Text) Or temp >= Round(GeoMaxCount - delta) Then
+               
+               GeoMaxCount = GeoMaxCount + GeoMax / countP
                 NamberGeo = NamberGeo + 1
                 geoLenght = 0
-                ' MsgBox ("Count = " & N)
-
+                
         End If
+        
+        If temp >= Round(GeoMax - delta) Then GeoMaxCount = GeoMax / countP
     Next N
 End Sub
 
@@ -133,11 +145,12 @@ Public Function OrderGeo(Geos, PathXYLen) As Integer()
 
 Dim GeoCol As Collection
 Dim tempArr() As Integer
+Dim delta As Integer
 Dim var As Collection
 Dim check As Boolean
 
 
-    
+delta = Round(Geos(1).MaxYL - Geos(1).MinYL) - 1
     
 'With CreateObject("System.Collections.SortedList")
 'For Each it In GeoCol
@@ -157,15 +170,15 @@ If frmMain.CheckBox1.Value Then check = frmMain.OptionButton1.Value Else check =
 
 If check Then
     
-     Set GeoCol = SetCollectionY(Geos)
+     Set GeoCol = SetCollectionY(Geos, delta)
      ReDim tempArr(GeoCol.Count)
-     Set var = SortX(GeoCol, PathXYLen)
+     Set var = SortX(GeoCol, PathXYLen, delta)
     
 Else:
  
-    Set GeoCol = SetCollectionX(Geos)
+    Set GeoCol = SetCollectionX(Geos, delta)
     ReDim tempArr(GeoCol.Count)
-    Set var = SortY(GeoCol, PathXYLen)
+    Set var = SortY(GeoCol, PathXYLen, delta)
 
 End If
 

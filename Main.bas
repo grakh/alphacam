@@ -200,14 +200,14 @@ Set LD = App.CreateLeadData
 With LD
  ' change the leaddata
     .LeadIn = acamLeadBOTH
-    .LengthIn = 1
-    .RadiusIn = 1
-    .AngleIn = 45
+    .LengthIn = CDbl(frmMain.TextBox9.Value)
+    .RadiusIn = CDbl(frmMain.TextBox9.Value)
+    .AngleIn = CInt(frmMain.TextBox8.Value)
     .LineArcInTangential = True
     .LeadOut = acamLeadBOTH
-    .LengthOut = 1
-    .RadiusOut = 1
-    .AngleOut = 45
+    .LengthOut = CDbl(frmMain.TextBox11.Value)
+    .RadiusOut = CDbl(frmMain.TextBox11.Value)
+    .AngleOut = CInt(frmMain.TextBox10.Value)
     .LineArcOutTangential = True
 End With
 ' (re)set the new leaddata for the milldata
