@@ -110,7 +110,7 @@ Public Sub CountGeo(Geos, NG, CountG, GeoMax)
     flag = frmMain.OptionButton2.Value
     NamberGeo = 1
 
-    delta = Round(Geos(1).MaxYL - Geos(1).MinYL) - 1
+    delta = 10 'Round(Geos(1).MaxYL - Geos(1).MinYL) - 1
     If flag Then delta = Round(Geos(1).MaxYL - Geos(1).MinYL) - 1 Else delta = Round(Geos(1).MaxXL - Geos(1).MinXL) - 1
     countP = CInt(frmMain.TextBox6.Value)
     
@@ -150,7 +150,8 @@ Dim var As Collection
 Dim check As Boolean
 
 
-delta = Round(Geos(1).MaxYL - Geos(1).MinYL) - 1
+delta = 10 'Round(Geos(1).MaxYL - Geos(1).MinYL) - 1
+If flag Then delta = Round(Geos(1).MaxYL - Geos(1).MinYL) - 1 Else delta = Round(Geos(1).MaxXL - Geos(1).MinXL) - 1
     
 'With CreateObject("System.Collections.SortedList")
 'For Each it In GeoCol
