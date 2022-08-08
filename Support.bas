@@ -145,14 +145,15 @@ Public Function OrderGeo(Geos, PathXYLen) As Integer()
 
 Dim GeoCol As Collection
 Dim tempArr() As Integer
-Dim delta As Integer
+Dim deltaX, deltaY As Integer
 Dim var As Collection
 Dim check As Boolean
 
     flag = frmMain.OptionButton1.Value
 
-    delta = 10 'Round(Geos(1).MaxYL - Geos(1).MinYL) - 1
-    If flag Then delta = Round(Geos(1).MaxYL - Geos(1).MinYL - 2) Else delta = Round(Geos(1).MaxXL - Geos(1).MinXL - 2)
+
+    deltaY = Round(Geos(1).MaxYL - Geos(1).MinYL - 2)
+    deltaX = Round(Geos(1).MaxXL - Geos(1).MinXL - 2)
     
 'With CreateObject("System.Collections.SortedList")
 'For Each it In GeoCol
@@ -172,15 +173,15 @@ If frmMain.CheckBox1.Value Then check = frmMain.OptionButton1.Value Else check =
 
 If check Then
     
-     Set GeoCol = SetCollectionY(Geos, delta)
+     Set GeoCol = SetCollectionY(Geos, deltaY)
      ReDim tempArr(GeoCol.Count)
-     Set var = SortX(GeoCol, PathXYLen, delta)
+     Set var = SortX(GeoCol, PathXYLen, deltaX)
     
 Else:
  
-    Set GeoCol = SetCollectionX(Geos, delta)
+    Set GeoCol = SetCollectionX(Geos, deltaX)
     ReDim tempArr(GeoCol.Count)
-    Set var = SortY(GeoCol, PathXYLen, delta)
+    Set var = SortY(GeoCol, PathXYLen, deltaY)
 
 End If
 
