@@ -6,22 +6,24 @@ Public Function CreatePrimitive( _
 
     Dim Drw As Drawing
     Set Drw = App.ActiveDrawing
-    Dim LyrIN, LyrOUT, Lyr As Layer
+    Dim LyrIN, LyrOUT, Lyr, iHOC As Layer
     Dim NG(100), CountG(100) As Integer
     Dim GeoInOut, GeoRev As Paths
     Dim ret As String
     Dim Geos As Paths
     Dim PathXYLen(2) As Integer
     Dim Text6count, GeoMax As Integer
+    Dim Measurement As New Dictionary
+    
     PathXYLen(1) = 1
     
-    Collection Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax
+    Collection Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, iHOC, Measurement
 
-    Mill Drw, Geos.Count, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax
+    Mill Drw, Geos.Count, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, Measurement
     
   'MsgBox ("N = " & Drw.Operations.Item(1).Number)
-    Drw.Operations.Item(Drw.Operations.Count).Delete ' для черновой
- 
+   ' Drw.Operations.Item(Drw.Operations.Count).Delete ' для черновой
+ iHOC.Visible = True
     ' Drw.Options.ShowRapids = False
     ' Drw.ThreeDViews = True
     Drw.ZoomAll
@@ -58,15 +60,15 @@ Public Sub Collection2(Drw, Geos, LyrIN, LyrOUT)
     
     ' Drw.SetToolSideAuto acamToolSidePOCKET
     
-      Dim Geo As Path
-    For Each Geo In Geos
-        Geo.ToolInOut = acamINSIDE
+      Dim geo As Path
+    For Each geo In Geos
+        geo.ToolInOut = acamINSIDE
         'Geo.SetStartPoint 800, 600
-        Geo.Copy.SetLayer (LyrIN)
-        Geo.ToolInOut = acamOUTSIDE
+        geo.Copy.SetLayer (LyrIN)
+        geo.ToolInOut = acamOUTSIDE
         'Geo.SetStartPoint 800, 600
-        Geo.Copy.SetLayer (LyrOUT)
-    Next Geo
+        geo.Copy.SetLayer (LyrOUT)
+    Next geo
     
       Geos.Selected = False
         
@@ -95,9 +97,9 @@ Private Sub GetMillTool(Name As String, Comb As String) ' Name of tool, eg "Flat
 End Sub
 
 
-Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax)
+Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, iHOC, Measurement)
 
-    Dim Geo As Path
+    Dim geo As Path
     Dim GeoIn, GeoOut As Path
     Dim rev, res As Boolean
     Dim J, J1 As Integer
@@ -118,8 +120,9 @@ Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen,
     Set LyrOUT = Drw.CreateLayer("OUT")
     LyrOUT.Color = acamYELLOW
 
-
-
+    Set iHOC = Drw.CreateLayer("iHOC-System")
+    iHOC.Color = acamWHITE
+    iHOC.Visible = False
    
     Set Geos = Drw.UserSelectMultiGeosCollection("Multi Finish: Select Geometries", 0)
     If Geos.Count = 0 Then End
@@ -168,7 +171,7 @@ Next
     'End If
     
     ' MsgBox ("Count = " & NG(1))
-    CountGeo Geos, ArrGeo, CountG, GeoMax
+    CountGeo Drw, Geos, ArrGeo, CountG, GeoMax, iHOC, Measurement
     InOutAutoClose Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, ArrGeo
     
     LyrIN.Visible = False
@@ -177,17 +180,23 @@ Next
     
 End Sub
 
-Public Sub Mill(Drw, GeosCount, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax)
+Public Sub Mill(Drw, GeosCount, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, Measurement)
 Dim J, a, DOc, D, K As Integer
 Dim PathLen As Double
+Const ATTR2 As String = "LicomDECHMessPunkt_X"
+Const ATTR3 As String = "LicomDECHMessPunkt_Y"
+Const ATTR1 As String = "LicomDECHMessZyklus"
+
 
   GetMillTool frmMain.ComboBox2.Text, frmMain.ComboBox1.Text
   
 
  Dim TpsIn, TpsOut As Paths
+ Dim PIn As Path
  Dim LD As LeadData
  Dim MD As MillData
  Dim check, flag As Boolean
+ 
  flag = False
 
  ' get a suboperation
@@ -212,9 +221,10 @@ With LD
 End With
 ' (re)set the new leaddata for the milldata
 MD.SetLeadData LD
+
     DOc = Drw.Operations.Count
     ' MsgBox ("OpNo = " & DOc)
-        MD.OpNo = 1
+        MD.OpNo = DOc + 1
         MD.SafeRapidLevel = 10
         MD.RapidDownTo = 3
         MD.MaterialTop = 0.25
@@ -233,6 +243,7 @@ Drw.SetLayer Nothing
 
 Set TpsIn = MD.RoughFinish
 
+Drw.Operations.Item(Drw.Operations.Count).Delete ' для черновой
 ' LyrIN.Geometries.Selected = False
 ' LyrOUT.Geometries.Selected = True
 
@@ -240,6 +251,7 @@ Set TpsIn = MD.RoughFinish
 ' Set TpsOut = MD.RoughFinish
 
  Drw.SetLayer Nothing
+ Drw.DeleteSelected
  
 J = 1
 
@@ -252,19 +264,16 @@ Else: Text6count = Fix(Chet) * frmMain.TextBox6.Value
 End If
 
 check = frmMain.CheckBox1.Value
-'If frmMain.CheckBox1.Value = False And CInt(frmMain.TextBox6.Value) > 1 Then
-'    check = True
-'    flag = True
-'End If
 
-    ' MsgBox ("TpsIn = " & TpsIn.Count & " vars = " & vars.Count)
         ' Apply lead-in/out on the new tool paths
-    For I = 1 To TpsIn.Count
+    For I = 1 To GeoInOut.Count
 
         If check = False Then
-        ' If frmMain.OptionButton4.Value Then
-        ' MsgBox ("Geos = " & vars(K).X & " GeoMaxX = " & GeoMaxX)
+
             If (CountG(J)) < I Then
+                ' MsgBox ("CountG = " & CountG(J))
+                ' If Measurement.Exists(CountG(J)) Then
+                ' End If
                 J = J + 1
             End If
         Else:
@@ -293,32 +302,49 @@ check = frmMain.CheckBox1.Value
             End If
             
         End If
-
-
-        TpsIn(I).OpNo = J + DOc
-
-          
+        
+        If I = CountG(J) Then
+            MD.Attribute(ATTR1) = 1
+            MD.Attribute(ATTR2) = Measurement.Item(CountG(J))(0)
+            MD.Attribute(ATTR3) = Measurement.Item(CountG(J))(1)
+        Else:
+            MD.DeleteAttribute (ATTR1)
+            MD.DeleteAttribute (ATTR2)
+            MD.DeleteAttribute (ATTR3)
+        End If
+        'TpsIn(I).OpNo = J + DOc
+        Drw.DeleteSelected
+        GeoInOut(I).Selected = True ' select the path in the collection
+        MD.OpNo = J + DOc
+        MD.RoughFinish
+        Drw.DeleteSelected
+                  
      Next I
      
 
         'LyrIN.Geometries.Selected = True
         'LyrOUT.Geometries.Selected = True
-        GeoInOut.Selected = True
-        MD.OpNo = J + DOc + 1  ' ??? ????????
-
+        'GeoInOut.Selected = True
+        'MD.OpNo = J + DOc + 1
+'AfterRoughFinish TpsIn, 0
      'MDin.RoughFinishUsePreviousMachining = True
-        MD.RoughFinish
-        
-    'LyrIN.Visible = False
-    'LyrOUT.Visible = False
+       ' MD.RoughFinish
+    'Drw.Operations.Collapse
+    Drw.DeleteSelected
+    Drw.Redraw
     
 End Sub
 
-Function BeforeRoughFinish()
+ Sub AfterRoughFinish(PS As Paths, Redo As Integer)
 
-    Do While S > 1000000
-    S = S + 1
-    Loop
+  Dim P As Path
 
- End Function
+  For Each P In PS
+
+   P.Attribute("LicomUKDMBTest1") = "Test1"
+
+  Next P
+
+ End Sub
+
 

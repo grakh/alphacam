@@ -19,10 +19,10 @@ T = 1
             End If
         Next Y
         ' MsgBox "temp = " & TempY
-        m = 0
+        M = 0
         
         For Each a In oldGeo
-        m = m + 1
+        M = M + 1
         
             If ((TempY - delta) < CInt(a.Y) And CInt(a.Y) < (TempY + delta)) Then
             ' MsgBox "temp = " & TempX & " m = " & m
@@ -30,8 +30,8 @@ T = 1
 
                 var.Add a
                 var(S).Ind = S
-                oldGeo.Remove m
-                m = m - 1
+                oldGeo.Remove M
+                M = M - 1
             End If
         Next a
         PathXYLen(T) = S
@@ -62,10 +62,10 @@ T = 1
             End If
         Next X
         ' MsgBox "temp = " & TempY
-        m = 0
+        M = 0
         
         For Each a In oldGeo
-        m = m + 1
+        M = M + 1
         
             If ((TempX - delta) < CInt(a.X) And CInt(a.X) < (TempX + delta)) Then
             ' MsgBox "temp = " & TempX & " m = " & m
@@ -73,8 +73,8 @@ T = 1
                 
                 var.Add a
                 var(S).Ind = S
-                oldGeo.Remove m
-                m = m - 1
+                oldGeo.Remove M
+                M = M - 1
             End If
         Next a
         PathXYLen(T) = S
@@ -119,17 +119,17 @@ Public Function SetCollectionX(Geos, delta) As Collection
             End If
         Next X
         'MsgBox "temp = " & TempX
-        m = 0
+        M = 0
         
         For Each a In oldGeos
-        m = m + 1
+        M = M + 1
             If ((TempX - delta) < CInt(a.X) And CInt(a.X) < (TempX + delta)) Then
             ' MsgBox "temp = " & TempX & " m = " & m
                 S = S + 1
                 var.Add a
                 var(S).Ind = S
-                oldGeos.Remove m
-                m = m - 1
+                oldGeos.Remove M
+                M = M - 1
             End If
 
         Next a
@@ -174,18 +174,18 @@ Public Function SetCollectionY(Geos, delta) As Collection
             End If
         Next Y
         'MsgBox "temp = " & TempX
-        m = 0
+        M = 0
 
         For Each a In oldGeos
-        m = m + 1
+        M = M + 1
             If ((TempY - delta) < CInt(a.Y) And CInt(a.Y) < (TempY + delta)) Then
             ' MsgBox "temp = " & TempX & " m = " & m
                 S = S + 1
 
                 var.Add a
                 var(S).Ind = S
-                oldGeos.Remove m
-                m = m - 1
+                oldGeos.Remove M
+                M = M - 1
             End If
 
         Next a

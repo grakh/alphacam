@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmMain 
-   Caption         =   "Cutting v-1.3"
-   ClientHeight    =   7020
+   Caption         =   "Cutting v-2.0"
+   ClientHeight    =   7710
    ClientLeft      =   120
    ClientTop       =   465
    ClientWidth     =   5955
@@ -44,12 +44,24 @@ Private Sub CheckBox1_Click()
     End If
 End Sub
 
+Private Sub SpinButton1_Change()
+TextBox12.Value = SpinButton1.Value
+End Sub
+
 Private Sub TextBox10_Change()
 If IsNumeric(TextBox10.Value) = False Then TextBox10.Value = ""
 End Sub
 
 Private Sub TextBox11_Change()
 If IsNumeric(TextBox11.Value) = False Then TextBox11.Value = ""
+End Sub
+
+Private Sub TextBox12_Change()
+If IsNumeric(TextBox12.Value) = False Then TextBox12.Value = ""
+End Sub
+
+Private Sub TextBox13_Change()
+If IsNumeric(TextBox13.Value) = False Then TextBox13.Value = ""
 End Sub
 
 Private Sub TextBox2_Change()

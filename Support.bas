@@ -102,16 +102,40 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
     Next N
 End Sub
 
-Public Sub CountGeo(Geos, NG, CountG, GeoMax)
+Public Sub CountGeo(Drw, Geos, NG, CountG, GeoMax, iHOC, Measurement)
 
-    Dim geoLenght, GeoMaxCount As Double
+    Dim geoLenght, GeoMaxCountAs As Double
     Dim NamberGeo, N, namberG, temp, delta, countP As Integer
     Dim flag As Boolean
+
+    Dim p1 As Path, p2 As Path
+    Dim e1 As Element, e2 As Element
+    Dim group As Integer
+    Dim Namb As Long
+    Dim XInt, YInt
+    Dim E, Ex, Ey As Double
+    Dim deltaMeasure, deltaMeasureX, deltaMeasureY As Double
+    deltaMeasure = frmMain.TextBox12.Value
+    If deltaMeasure >= 0 Then
+        deltaMeasureY = deltaMeasure
+        deltaMeasureX = 0
+    Else:
+        deltaMeasureY = 0
+        deltaMeasureX = Abs(deltaMeasure)
+    End If
+ 
     flag = frmMain.OptionButton2.Value
     NamberGeo = 1
 
+
+    iHOC.Visible = True
+     Drw.SetLayer (iHOC)
+     
+
+
     delta = 10 'Round(Geos(1).MaxYL - Geos(1).MinYL) - 1
-    If flag Then delta = Round(Geos(1).MaxYL - Geos(1).MinYL - 2) Else delta = Round(Geos(1).MaxXL - Geos(1).MinXL - 2)
+    If flag Then delta = Round(Geos(1).MaxYL - Geos(1).MinYL - 2) Else _
+        delta = Round(Geos(1).MaxXL - Geos(1).MinXL - 2)
     countP = CInt(frmMain.TextBox6.Value)
     
     GeoMaxCount = GeoMax / countP
@@ -129,15 +153,56 @@ For N = 1 To Geos.Count
         ' MsgBox ("temp = " & temp & " GeoMax = " & GeoMaxCount)
 
         If geoLenght > CInt(frmMain.TextBox7.Text) Or temp >= Round(GeoMaxCount - delta) Then
-               
+        
+        
+       ' h = (Geos(namberG).MaxXL - Geos(namberG).MinXL + Geos(namberG).MaxYL - Geos(namberG).MinYL) / 80
+
+
+         'Set p2 = Drw.Create2DLine(Geos(namberG).MinXL, Geos(namberG).MinYL, Geos(namberG).MaxXL, Geos(namberG).MaxYL)
+         'Set e2 = p2.GetFirstElem
+      
+        'For Each e1 In Geos(namberG).Elements
+            'nam = Geos(namberG).Intersect(p2, x1#, y1#, x2#, y2#)
+        'Next e1
+        
+        ' MsgBox ("x1 = " & x1# & " y1 = " & y1# & " x2 = " & x2# & " y2 = " & y2#)
+                
+        'If y1# < y2# Then Set p1 = Drw.CreateCircle(2, x1#, y1#) Else
+        ' Ex = (Geos(namberG).MaxXL + Geos(namberG).MinXL) / 2
+        ' Ey = (Geos(namberG).MaxYL + Geos(namberG).MinYL) / 2
+        ' Set p2 = Drw.Create2DLine(Geos(namberG).MinXL, Geos(namberG).MinYL, Ex, Ey)
+        Namb = Geos(namberG).IntersectWithLine(Geos(namberG).MinXL + deltaMeasureX, _
+            Geos(namberG).MinYL + deltaMeasureY, Geos(namberG).MaxXL, _
+            Geos(namberG).MaxYL, True, XInt, YInt)
+            Ex = XInt(0)
+            Ey = YInt(0)
+        For X = 0 To Namb - 1
+            If XInt(X) < Ex Then
+                Ex = XInt(X)
+                Ey = YInt(X)
+            End If
+        Next X
+        
+        Set p2 = Drw.Create2DLine(Ex, Ey, Ex + 2, Ey + 2)
+        Measurement.Add CountG(NamberGeo), Array(Ex, Ey)
+        
+        Set p1 = Drw.CreateCircle(2, Ex, Ey)
+        ' MsgBox ("keys = " & CountG(NamberGeo))
+group = Drw.GetNextGroupNumberForGeometries
+p2.group = group
+p1.group = group
+  ' MsgBox ("key = " & Measurement.Exists(6) & " x = " & Measurement.Item(6)(0) & " y = " & Measurement.Item(6)(1))
+ 
                GeoMaxCount = GeoMaxCount + GeoMax / countP
                 NamberGeo = NamberGeo + 1
                 geoLenght = 0
-                
+                ' GeoIhoc.SetLayer (iHOC)
         End If
         
         If temp >= Round(GeoMax) Then GeoMaxCount = GeoMax / countP
     Next N
+    
+    iHOC.Visible = False
 End Sub
 
 Public Function OrderGeo(Geos, PathXYLen) As Integer()
