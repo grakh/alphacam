@@ -102,7 +102,7 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
     Next N
 End Sub
 
-Public Sub CountGeo(Drw, Geos, NG, CountG, GeoMax, iHOC, Measurement)
+Public Sub CountGeo(Drw, Geos, NG, CountG, GeoMax, iHOC, Measurement, GeoMin)
 
     Dim geoLenght, GeoMaxCountAs As Double
     Dim NamberGeo, N, namberG, temp, delta, countP As Integer
@@ -113,7 +113,7 @@ Public Sub CountGeo(Drw, Geos, NG, CountG, GeoMax, iHOC, Measurement)
     Dim group As Integer
     Dim Namb As Long
     Dim XInt, YInt
-    Dim E, Ex, Ey As Double
+    Dim E, Ex, Ey, Leng As Double
     Dim deltaMeasure, deltaMeasureX, deltaMeasureY As Double
     deltaMeasure = frmMain.TextBox12.Value
     If deltaMeasure >= 0 Then
@@ -126,7 +126,7 @@ Public Sub CountGeo(Drw, Geos, NG, CountG, GeoMax, iHOC, Measurement)
  
     flag = frmMain.OptionButton2.Value
     NamberGeo = 1
-
+   CountG(0) = 0
 
     iHOC.Visible = True
      Drw.SetLayer (iHOC)
@@ -135,11 +135,12 @@ Public Sub CountGeo(Drw, Geos, NG, CountG, GeoMax, iHOC, Measurement)
 
     delta = 10 'Round(Geos(1).MaxYL - Geos(1).MinYL) - 1
     If flag Then delta = Round(Geos(1).MaxYL - Geos(1).MinYL - 2) Else _
-        delta = Round(Geos(1).MaxXL - Geos(1).MinXL - 2)
+       delta = Round(Geos(1).MaxXL - Geos(1).MinXL - 2)
+       
     countP = CInt(frmMain.TextBox6.Value)
     
-    GeoMaxCount = GeoMax / countP
-  ' MsgBox ("geoMax = " & geoMax & " GeoMaxCount = " & GeoMaxCount)
+    GeoMaxCount = (GeoMax - GeoMin) / countP + GeoMin
+  ' MsgBox ("geoMax = " & GeoMax & " GeoMaxCount = " & GeoMaxCount)
   
 For N = 1 To Geos.Count
         ' N = N + 1
@@ -150,9 +151,9 @@ For N = 1 To Geos.Count
 
         CountG(NamberGeo) = N * 2
         geoLenght = geoLenght + Geos(namberG).Length * 2
-        ' MsgBox ("temp = " & temp & " GeoMax = " & GeoMaxCount)
+        ' MsgBox ("temp = " & temp & " GeoMax = " & GeoMaxCount & " delta = " & delta)
 
-        If geoLenght > CInt(frmMain.TextBox7.Text) Or temp >= Round(GeoMaxCount - delta) Then
+        If geoLenght >= CInt(frmMain.TextBox7.Text) Or temp >= GeoMaxCount Or N = Geos.Count Or temp >= (GeoMax - delta) Then
         
         
        ' h = (Geos(namberG).MaxXL - Geos(namberG).MinXL + Geos(namberG).MaxYL - Geos(namberG).MinYL) / 80
@@ -187,21 +188,21 @@ For N = 1 To Geos.Count
         Measurement.Add CountG(NamberGeo), Array(Ex, Ey)
         
         Set p1 = Drw.CreateCircle(2, Ex, Ey)
-        ' MsgBox ("keys = " & CountG(NamberGeo))
+        ' MsgBox ("keys = " & NamberGeo)
 group = Drw.GetNextGroupNumberForGeometries
 p2.group = group
 p1.group = group
   ' MsgBox ("key = " & Measurement.Exists(6) & " x = " & Measurement.Item(6)(0) & " y = " & Measurement.Item(6)(1))
  
-               GeoMaxCount = GeoMaxCount + GeoMax / countP
+               GeoMaxCount = GeoMaxCount + (GeoMax - GeoMin) / countP + GeoMin
                 NamberGeo = NamberGeo + 1
                 geoLenght = 0
                 ' GeoIhoc.SetLayer (iHOC)
         End If
         
-        If temp >= Round(GeoMax) Then GeoMaxCount = GeoMax / countP
+        If temp >= (GeoMax - delta) Then GeoMaxCount = (GeoMax - GeoMin) / countP + GeoMin
     Next N
-    
+    ' MsgBox ("M = " & Measurement.Count)
     iHOC.Visible = False
 End Sub
 

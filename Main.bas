@@ -12,12 +12,12 @@ Public Function CreatePrimitive( _
     Dim ret As String
     Dim Geos As Paths
     Dim PathXYLen(2) As Integer
-    Dim Text6count, GeoMax As Integer
+    Dim Text6count, GeoMax, GeoMin As Integer
     Dim Measurement As New Dictionary
     
     PathXYLen(1) = 1
     
-    Collection Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, iHOC, Measurement
+    Collection Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, iHOC, Measurement, GeoMin
 
     Mill Drw, Geos.Count, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, Measurement
     
@@ -97,7 +97,7 @@ Private Sub GetMillTool(Name As String, Comb As String) ' Name of tool, eg "Flat
 End Sub
 
 
-Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, iHOC, Measurement)
+Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, iHOC, Measurement, GeoMin)
 
     Dim geo As Path
     Dim GeoIn, GeoOut As Path
@@ -139,9 +139,9 @@ Next R
 
 For Each it In Geos
     If frmMain.OptionButton1.Value Then
-        If it.MinXL > GeoMax Then GeoMax = it.MinXL
+        If it.MinXL > GeoMax Then GeoMax = it.MinXL Else GeoMin = it.MinXL
     Else:
-        If it.MinYL > GeoMax Then GeoMax = it.MinYL
+        If it.MinYL > GeoMax Then GeoMax = it.MinYL Else GeoMin = it.MinYL
     End If
 Next
 ' MsgBox "GeoMaxX = " & GeoMaxX & "GeoMaxY = " & GeoMaxY
@@ -171,7 +171,7 @@ Next
     'End If
     
     ' MsgBox ("Count = " & NG(1))
-    CountGeo Drw, Geos, ArrGeo, CountG, GeoMax, iHOC, Measurement
+    CountGeo Drw, Geos, ArrGeo, CountG, GeoMax, iHOC, Measurement, GeoMin
     InOutAutoClose Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, ArrGeo
     
     LyrIN.Visible = False
@@ -304,6 +304,7 @@ check = frmMain.CheckBox1.Value
         End If
         
         If I = CountG(J) Then
+            ' MsgBox ("I = " & CountG(J))
             MD.Attribute(ATTR1) = 1
             MD.Attribute(ATTR2) = Measurement.Item(CountG(J))(0)
             MD.Attribute(ATTR3) = Measurement.Item(CountG(J))(1)
@@ -313,9 +314,11 @@ check = frmMain.CheckBox1.Value
             MD.DeleteAttribute (ATTR3)
         End If
         'TpsIn(I).OpNo = J + DOc
+
+        MD.OpNo = J + DOc
+        
         Drw.DeleteSelected
         GeoInOut(I).Selected = True ' select the path in the collection
-        MD.OpNo = J + DOc
         MD.RoughFinish
         Drw.DeleteSelected
                   
