@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmMain 
-   Caption         =   "Cutting v-2.2"
+   Caption         =   "Cutting v-2.4"
    ClientHeight    =   7410
    ClientLeft      =   120
    ClientTop       =   465
@@ -37,11 +37,17 @@ End Sub
 Private Sub CheckBox1_Click()
     If CheckBox1.Value = True Then
         Frame5.Caption = "Элементов в одной программе"
-        TextBox7.Enabled = False
+        ' TextBox7.Enabled = False
+        CheckBox3.Value = False
     Else:
         Frame5.Caption = "Программ в одной линии"
-        TextBox7.Enabled = True
+        ' TextBox7.Enabled = True
+        CheckBox3.Value = True
     End If
+End Sub
+
+Private Sub CheckBox2_Click()
+ If CheckBox2.Value Then CheckBox2.Caption = "Fast" Else CheckBox2.Caption = "Slow"
 End Sub
 
 Private Sub SpinButton1_Change()
@@ -99,6 +105,7 @@ If IsNumeric(TextBox9.Value) = False Then TextBox9.Value = ""
 End Sub
 
 Private Sub UserForm_Initialize()
+
   ComboBox1.AddItem "1_2"
   ComboBox1.AddItem "0_8"
   ComboBox1.AddItem "0_6"

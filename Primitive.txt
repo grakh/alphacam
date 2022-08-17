@@ -1,5 +1,5 @@
 $1
-Primitive 2.2
+Primitive 2.4
 
 $2
 The command "Automate" creates along a Geometry.

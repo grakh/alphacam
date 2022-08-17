@@ -12,7 +12,7 @@ Public Function SortY(GeoCol, PathXYLen, delta)
     Set oldGeo = GeoCol
 T = 1
     For J = 1 To oldGeo.Count
-        TempY = 1000
+        TempY = 2000
         For Each Y In oldGeo
             If Y.Y < TempY Then
                TempY = CInt(Y.Y)
@@ -55,7 +55,7 @@ Public Function SortX(GeoCol, PathXYLen, delta)
     Set oldGeo = GeoCol
 T = 1
     For J = 1 To oldGeo.Count
-        TempX = 1000
+        TempX = 2000
         For Each X In oldGeo
             If X.X < TempX Then
                TempX = CInt(X.X)
@@ -112,7 +112,7 @@ Public Function SetCollectionX(Geos, delta) As Collection
     
 
     For J = 1 To Geos.Count
-        TempX = 1000
+        TempX = 2000
         For Each X In oldGeos
             If X.X < TempX Then
                TempX = CInt(X.X)
@@ -167,7 +167,7 @@ Public Function SetCollectionY(Geos, delta) As Collection
     
 
     For J = 1 To Geos.Count
-        TempY = 1000
+        TempY = 2000
         For Each Y In oldGeos
             If Y.Y < TempY Then
                TempY = CInt(Y.Y)

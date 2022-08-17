@@ -139,9 +139,11 @@ Next R
 
 For Each it In Geos
     If frmMain.OptionButton1.Value Then
-        If it.MinXL > GeoMax Then GeoMax = it.MinXL Else GeoMin = it.MinXL
+        If it.MinXL < GeoMin Then GeoMin = Round(it.MinXL)
+        If it.MinXL > GeoMax Then GeoMax = Round(it.MinXL)
     Else:
-        If it.MinYL > GeoMax Then GeoMax = it.MinYL Else GeoMin = it.MinYL
+        If it.MinYL < GeoMin Then GeoMin = Round(it.MinYL)
+        If it.MinYL > GeoMax Then GeoMax = Round(it.MinYL)
     End If
 Next
 ' MsgBox "GeoMaxX = " & GeoMaxX & "GeoMaxY = " & GeoMaxY
@@ -198,7 +200,8 @@ Const ATTR1 As String = "LicomDECHMessZyklus"
  Dim check, flag As Boolean
  
  flag = False
-
+ flagM = frmMain.CheckBox3.Value
+ flagFS = frmMain.CheckBox2.Value
  ' get a suboperation
 
 
@@ -243,7 +246,7 @@ Drw.SetLayer Nothing
 
 Set TpsIn = MD.RoughFinish
 
-Drw.Operations.Item(Drw.Operations.Count).Delete ' для черновой
+If Not flagFS Then Drw.Operations.Item(Drw.Operations.Count).Delete ' для черновой
 ' LyrIN.Geometries.Selected = False
 ' LyrOUT.Geometries.Selected = True
 
@@ -303,6 +306,22 @@ check = frmMain.CheckBox1.Value
             
         End If
         
+  If flagFS Then
+    If flagM Then
+        If I = CountG(J) Then
+            TpsIn(I).Attribute(ATTR1) = 1
+            TpsIn(I).Attribute(ATTR2) = Measurement.Item(CountG(J))(0)
+            TpsIn(I).Attribute(ATTR3) = Measurement.Item(CountG(J))(1)
+        Else:
+            TpsIn(I).DeleteAttribute (ATTR1)
+            TpsIn(I).DeleteAttribute (ATTR2)
+            TpsIn(I).DeleteAttribute (ATTR3)
+        End If
+        TpsIn(I).OpNo = J + DOc
+    End If
+  
+  Else:
+    If flagM Then
         If I = CountG(J) Then
             ' MsgBox ("I = " & CountG(J))
             MD.Attribute(ATTR1) = 1
@@ -313,7 +332,7 @@ check = frmMain.CheckBox1.Value
             MD.DeleteAttribute (ATTR2)
             MD.DeleteAttribute (ATTR3)
         End If
-        'TpsIn(I).OpNo = J + DOc
+    End If
 
         MD.OpNo = J + DOc
         
@@ -321,18 +340,22 @@ check = frmMain.CheckBox1.Value
         GeoInOut(I).Selected = True ' select the path in the collection
         MD.RoughFinish
         Drw.DeleteSelected
-                  
+  End If
+  
      Next I
      
-
+If flagFS Then
         'LyrIN.Geometries.Selected = True
         'LyrOUT.Geometries.Selected = True
-        'GeoInOut.Selected = True
-        'MD.OpNo = J + DOc + 1
+        GeoInOut.Selected = True
+        MD.OpNo = J + DOc + 1
 'AfterRoughFinish TpsIn, 0
      'MDin.RoughFinishUsePreviousMachining = True
-       ' MD.RoughFinish
+        MD.RoughFinish
     'Drw.Operations.Collapse
+    Drw.Operations.Item(Drw.Operations.Count).Delete ' для черновой
+End If
+
     Drw.DeleteSelected
     Drw.Redraw
     
