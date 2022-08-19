@@ -197,3 +197,42 @@ Public Function SetCollectionY(Geos, delta) As Collection
     
 End Function
 
+
+Public Function inOut(Geo, DIx, DIy, DOx, DOy) As Double()
+Dim Ix, Iy, Ox, Oy As Double
+Dim NambI, NambO As Long
+Dim XI, YI
+Dim XO, YO
+Dim temp(3) As Double
+
+        NambI = Geo.IntersectWithLine(Geo.MinXL, Geo.MinYL, _
+            Geo.MaxXL - DIx, Geo.MaxYL - DIy, True, XI, YI)
+            Ix = XI(0)
+            Iy = YI(0)
+            
+        For X = 0 To NambI - 1
+            If XI(X) > Ix Then
+                Ix = XI(X)
+                Iy = YI(X)
+            End If
+        Next X
+        temp(0) = Ix
+        temp(1) = Iy
+        ' MsgBox ("Ix = " & Ix & ", Iy = " & Iy)
+        
+        NambO = Geo.IntersectWithLine(Geo.MinXL, Geo.MinYL, _
+            Geo.MaxXL - DOx, Geo.MaxYL - DOy, True, XO, YO)
+            Ox = XO(0)
+            Oy = YO(0)
+            
+        For Y = 0 To NambO - 1
+            If YO(Y) > Oy Then
+                Ox = XO(Y)
+                Oy = YO(Y)
+            End If
+        Next Y
+        temp(2) = Ox
+        temp(3) = Oy
+        ' MsgBox ("Ox = " & Ox & ", Oy = " & Oy)
+    inOut = temp
+End Function

@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmMain 
-   Caption         =   "Cutting v-2.4"
+   Caption         =   "Cutting v-2.5"
    ClientHeight    =   7410
    ClientLeft      =   120
    ClientTop       =   465
@@ -52,6 +52,14 @@ End Sub
 
 Private Sub SpinButton1_Change()
 TextBox12.Value = SpinButton1.Value
+End Sub
+
+Private Sub SpinButton2_Change()
+TextBox3.Value = SpinButton2.Value
+End Sub
+
+Private Sub SpinButton3_Change()
+TextBox5.Value = SpinButton3.Value
 End Sub
 
 Private Sub TextBox10_Change()

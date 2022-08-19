@@ -60,15 +60,15 @@ Public Sub Collection2(Drw, Geos, LyrIN, LyrOUT)
     
     ' Drw.SetToolSideAuto acamToolSidePOCKET
     
-      Dim geo As Path
-    For Each geo In Geos
-        geo.ToolInOut = acamINSIDE
+      Dim Geo As Path
+    For Each Geo In Geos
+        Geo.ToolInOut = acamINSIDE
         'Geo.SetStartPoint 800, 600
-        geo.Copy.SetLayer (LyrIN)
-        geo.ToolInOut = acamOUTSIDE
+        Geo.Copy.SetLayer (LyrIN)
+        Geo.ToolInOut = acamOUTSIDE
         'Geo.SetStartPoint 800, 600
-        geo.Copy.SetLayer (LyrOUT)
-    Next geo
+        Geo.Copy.SetLayer (LyrOUT)
+    Next Geo
     
       Geos.Selected = False
         
@@ -99,7 +99,7 @@ End Sub
 
 Public Sub Collection(Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, iHOC, Measurement, GeoMin)
 
-    Dim geo As Path
+    Dim Geo As Path
     Dim GeoIn, GeoOut As Path
     Dim rev, res As Boolean
     Dim J, J1 As Integer

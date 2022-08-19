@@ -36,17 +36,34 @@ End Sub
 Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
 
     Dim namberG As Integer
-    Dim InX, InY, OutX, OutY As Double
+    Dim InX, InY, OutX, OutY, delta As Double
+    Dim IO() As Double
     
-    InX = frmMain.TextBox2.Text
-    InY = frmMain.TextBox3.Text
-    OutX = frmMain.TextBox4.Text
-    OutY = frmMain.TextBox5.Text
+    delta = frmMain.TextBox3.Value
+    If delta >= 0 Then
+        InX = delta
+        InY = 0
+    Else:
+        InX = 0
+        InY = Abs(delta)
+    End If
+    
+    delta = frmMain.TextBox5.Value
+    If delta >= 0 Then
+        OutX = delta
+        OutY = 0
+    Else:
+        OutX = 0
+        OutY = Abs(delta)
+    End If
+    
     
  For N = 1 To Geos.Count
  
      namberG = NG(N)
      LyrIN.Visible = True
+     
+     IO = inOut(Geos(namberG), InX, InY, OutX, OutY)
      
      ' If frmMain.OptionButton4.Value Then
      If False Then
@@ -75,9 +92,9 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
      
      Else:
      
-          Set GeoIn = Drw.AutoClose(Geos(namberG).MaxXL - InX - 3, Geos(namberG).MaxYL - InY - 3, 0.01)
+          Set GeoIn = Drw.AutoClose(IO(0) - 1, IO(1) - 1, 0.001)
           GeoIn.SetLayer (LyrIN)
-          GeoIn.SetStartPoint Geos(namberG).MaxXL - InX, Geos(namberG).MaxYL - InY
+          GeoIn.SetStartPoint IO(0), IO(1)
           GeoIn.ToolInOut = acamINSIDE
           GeoInOut.Add (GeoIn)
           GeoIn.CW = True
@@ -87,9 +104,9 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
             LyrOUT.Visible = True
     
         
-           Set GeoIn = Drw.AutoClose(Geos(namberG).MaxXL - OutX - 3, Geos(namberG).MaxYL - OutY - 3, 0.01)
+           Set GeoIn = Drw.AutoClose(IO(0) - 1, IO(1) - 1, 0.001)
            GeoIn.SetLayer (LyrOUT)
-           GeoIn.SetStartPoint Geos(namberG).MaxXL - OutX, Geos(namberG).MaxYL - OutY
+           GeoIn.SetStartPoint IO(2), IO(3)
            GeoIn.ToolInOut = acamOUTSIDE
            GeoIn.CW = False
            GeoInOut.Add (GeoIn)
