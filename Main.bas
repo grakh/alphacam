@@ -14,8 +14,12 @@ Public Function CreatePrimitive( _
     Dim PathXYLen(2) As Integer
     Dim Text6count, GeoMax, GeoMin As Integer
     Dim Measurement As New Dictionary
+  
+
     
     PathXYLen(1) = 1
+    GeoMax = 0
+    GeoMin = 2000
     
     Collection Drw, Geos, LyrIN, LyrOUT, NG, GeoInOut, CountG, PathXYLen, GeoMax, iHOC, Measurement, GeoMin
 
@@ -24,6 +28,9 @@ Public Function CreatePrimitive( _
   'MsgBox ("N = " & Drw.Operations.Item(1).Number)
    ' Drw.Operations.Item(Drw.Operations.Count).Delete ' для черновой
  iHOC.Visible = True
+
+ Drw.CollapseOperations
+
     ' Drw.Options.ShowRapids = False
     ' Drw.ThreeDViews = True
     Drw.ZoomAll
@@ -204,17 +211,19 @@ Const ATTR1 As String = "LicomDECHMessZyklus"
  flagFS = frmMain.CheckBox2.Value
  ' get a suboperation
 
-
+DOc = Drw.Operations.Count
 
  Set MD = App.CreateMillData
 
-Set LD = App.CreateLeadData
-With LD
+Set LDO = App.CreateLeadData
+Set LDI = App.CreateLeadData
+
+With LDO
  ' change the leaddata
     .LeadIn = acamLeadBOTH
-    .LengthIn = CDbl(frmMain.TextBox9.Value)
-    .RadiusIn = CDbl(frmMain.TextBox9.Value)
-    .AngleIn = CInt(frmMain.TextBox8.Value)
+    .LengthIn = CDbl(frmMain.TextBox11.Value)
+    .RadiusIn = CDbl(frmMain.TextBox11.Value)
+    .AngleIn = CInt(frmMain.TextBox10.Value)
     .LineArcInTangential = True
     .LeadOut = acamLeadBOTH
     .LengthOut = CDbl(frmMain.TextBox11.Value)
@@ -222,11 +231,23 @@ With LD
     .AngleOut = CInt(frmMain.TextBox10.Value)
     .LineArcOutTangential = True
 End With
-' (re)set the new leaddata for the milldata
-MD.SetLeadData LD
 
-    DOc = Drw.Operations.Count
-    ' MsgBox ("OpNo = " & DOc)
+With LDI
+ ' change the leaddata
+    .LeadIn = acamLeadBOTH
+    .LengthIn = CDbl(frmMain.TextBox9.Value)
+    .RadiusIn = CDbl(frmMain.TextBox9.Value)
+    .AngleIn = CInt(frmMain.TextBox8.Value)
+    .LineArcInTangential = True
+    .LeadOut = acamLeadBOTH
+    .LengthOut = CDbl(frmMain.TextBox9.Value)
+    .RadiusOut = CDbl(frmMain.TextBox9.Value)
+    .AngleOut = CInt(frmMain.TextBox8.Value)
+    .LineArcOutTangential = True
+End With
+' (re)set the new leaddata for the milldata
+ MD.SetLeadData LDO
+' MsgBox ("MD = " & MD.GetLeadData.LengthIn)
         MD.OpNo = DOc + 1
         MD.SafeRapidLevel = 10
         MD.RapidDownTo = 3
@@ -238,23 +259,16 @@ MD.SetLeadData LD
         
         
 Drw.SetLayer Nothing
-        ' MD.Attribute("LicomUKDMBOperationName") = "MANUAL WITH TOOL COMP"
- 'LyrIN.Geometries.Selected = True
- 'LyrOUT.Geometries.Selected = True
-    GeoInOut.Selected = True
-' MsgBox ("PathXYLen = " & PathXYLen(1))
-
+Drw.DeleteSelected
+GeoInOut.Selected = True
 Set TpsIn = MD.RoughFinish
+Drw.SetLayer Nothing
+Drw.DeleteSelected
+ 
+If Not flagFS Then Drw.Operations.Item(Drw.Operations.Count).Delete
 
-If Not flagFS Then Drw.Operations.Item(Drw.Operations.Count).Delete ' для черновой
-' LyrIN.Geometries.Selected = False
-' LyrOUT.Geometries.Selected = True
-
-' GeoInOut.Selected = True
-' Set TpsOut = MD.RoughFinish
-
- Drw.SetLayer Nothing
- Drw.DeleteSelected
+ ' MsgBox ("TpsIn(1) = " & MD.GetLeadData.LengthIn)
+' MD.GetLeadData.LengthIn = 0.4
  
 J = 1
 
@@ -270,7 +284,15 @@ check = frmMain.CheckBox1.Value
 
         ' Apply lead-in/out on the new tool paths
     For I = 1 To GeoInOut.Count
-
+    
+        If (I Mod 2 <> 0) Then
+            MD.SetLeadData LDI
+            TpsIn(I).SetLeadInOutAuto acamLeadBOTH, acamLeadBOTH, CInt(frmMain.TextBox9.Value), CInt(frmMain.TextBox9.Value), CInt(frmMain.TextBox8.Value), False, False, 0
+        Else:
+            MD.SetLeadData LDO
+            TpsIn(I).SetLeadInOutAuto acamLeadBOTH, acamLeadBOTH, CInt(frmMain.TextBox11.Value), CInt(frmMain.TextBox11.Value), CInt(frmMain.TextBox10.Value), False, False, 0
+        End If
+        
         If check = False Then
 
             If (CountG(J)) < I Then
@@ -279,6 +301,7 @@ check = frmMain.CheckBox1.Value
                 ' End If
                 J = J + 1
             End If
+                    
         Else:
              If (I Mod 2 <> 0) Then
                 If Text6count <> 0 Then
@@ -303,7 +326,6 @@ check = frmMain.CheckBox1.Value
                 D = D + 1
               
             End If
-            
         End If
         
   If flagFS Then
@@ -317,9 +339,9 @@ check = frmMain.CheckBox1.Value
             TpsIn(I).DeleteAttribute (ATTR2)
             TpsIn(I).DeleteAttribute (ATTR3)
         End If
-        TpsIn(I).OpNo = J + DOc
     End If
-  
+            TpsIn(I).OpNo = J + DOc
+
   Else:
     If flagM Then
         If I = CountG(J) Then
@@ -333,44 +355,27 @@ check = frmMain.CheckBox1.Value
             MD.DeleteAttribute (ATTR3)
         End If
     End If
-
-        MD.OpNo = J + DOc
         
         Drw.DeleteSelected
         GeoInOut(I).Selected = True ' select the path in the collection
+        MD.OpNo = J + DOc
         MD.RoughFinish
         Drw.DeleteSelected
   End If
   
      Next I
      
+' MsgBox ("flagFS = " & flagFS)
 If flagFS Then
-        'LyrIN.Geometries.Selected = True
-        'LyrOUT.Geometries.Selected = True
         GeoInOut.Selected = True
         MD.OpNo = J + DOc + 1
-'AfterRoughFinish TpsIn, 0
-     'MDin.RoughFinishUsePreviousMachining = True
         MD.RoughFinish
-    'Drw.Operations.Collapse
+   ' Drw.Operations.Item(DOc + 1).Delete
     Drw.Operations.Item(Drw.Operations.Count).Delete ' для черновой
+
 End If
 
     Drw.DeleteSelected
     Drw.Redraw
     
 End Sub
-
- Sub AfterRoughFinish(PS As Paths, Redo As Integer)
-
-  Dim P As Path
-
-  For Each P In PS
-
-   P.Attribute("LicomUKDMBTest1") = "Test1"
-
-  Next P
-
- End Sub
-
-

@@ -38,6 +38,9 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
     Dim namberG As Integer
     Dim InX, InY, OutX, OutY, delta As Double
     Dim IO() As Double
+    Dim Tog As Double
+    
+    If frmMain.ToggleButton1.Value Then Tog = 0.5 Else Tog = -2
     
     delta = frmMain.TextBox3.Value
     If delta >= 0 Then
@@ -69,7 +72,7 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
      If False Then
           Set GeoIn = Drw.AutoClose( _
             Geos(namberG).MaxXL - (Geos(namberG).MaxXL - Geos(namberG).MinXL) / 2, _
-            Geos(namberG).MaxYL - (Geos(namberG).MaxYL - Geos(namberG).MinYL) / 2, 0.01)
+            Geos(namberG).MaxYL - (Geos(namberG).MaxYL - Geos(namberG).MinYL) / 2, 0.001)
           GeoIn.SetLayer (LyrIN)
           GeoIn.SetStartPoint Geos(namberG).MaxXL - InX, Geos(namberG).MaxYL - InY
           GeoIn.ToolInOut = acamINSIDE
@@ -83,7 +86,7 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
         
            Set GeoIn = Drw.AutoClose( _
             Geos(namberG).MaxXL - (Geos(namberG).MaxXL - Geos(namberG).MinXL) / 2, _
-            Geos(namberG).MaxYL - (Geos(namberG).MaxYL - Geos(namberG).MinYL) / 2, 0.01)
+            Geos(namberG).MaxYL - (Geos(namberG).MaxYL - Geos(namberG).MinYL) / 2, 0.001)
            GeoIn.SetLayer (LyrOUT)
            GeoIn.SetStartPoint Geos(namberG).MaxXL - OutX, Geos(namberG).MaxYL - OutY
            GeoIn.ToolInOut = acamOUTSIDE
@@ -92,7 +95,7 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
      
      Else:
      
-          Set GeoIn = Drw.AutoClose(IO(0) - 1, IO(1) - 1, 0.001)
+          Set GeoIn = Drw.AutoClose(IO(0) + Tog, IO(1) + Tog, 0.001)
           GeoIn.SetLayer (LyrIN)
           GeoIn.SetStartPoint IO(0), IO(1)
           GeoIn.ToolInOut = acamINSIDE
@@ -104,7 +107,7 @@ Public Sub InOutAutoClose(Drw, Geos, LyrIN, LyrOUT, GeoIn, GeoInOut, NG)
             LyrOUT.Visible = True
     
         
-           Set GeoIn = Drw.AutoClose(IO(0) - 1, IO(1) - 1, 0.001)
+           Set GeoIn = Drw.AutoClose(IO(0) + Tog, IO(1) + Tog, 0.001)
            GeoIn.SetLayer (LyrOUT)
            GeoIn.SetStartPoint IO(2), IO(3)
            GeoIn.ToolInOut = acamOUTSIDE
@@ -159,7 +162,8 @@ Public Sub CountGeo(Drw, Geos, NG, CountG, GeoMax, iHOC, Measurement, GeoMin)
     countP = CInt(frmMain.TextBox6.Value)
     
     GeoMaxCount = Round(((GeoMax - GeoMin) / countP) + GeoMin - delta)
-  'MsgBox ("GeoMax = " & GeoMax & " GeoMin = " & GeoMin & " GeoMaxCount = " & GeoMaxCount)
+    tempGMCount = Round((GeoMax - GeoMin) / countP)
+  ' MsgBox ("GeoMax = " & GeoMax & " GeoMin = " & GeoMin & " GeoMaxCount = " & GeoMaxCount)
   
 For N = 1 To Geos.Count
         ' N = N + 1
@@ -214,9 +218,10 @@ If flagM Then
 End If
   ' MsgBox ("key = " & Measurement.Exists(6) & " x = " & Measurement.Item(6)(0) & " y = " & Measurement.Item(6)(1))
  
-               GeoMaxCount = GeoMaxCount + Round(((GeoMax - GeoMin) / countP) + GeoMin)
+               GeoMaxCount = GeoMaxCount + tempGMCount
                 NamberGeo = NamberGeo + 1
                 geoLenght = 0
+                ' MsgBox ("GeoMaxCount = " & GeoMaxCount)
                 ' GeoIhoc.SetLayer (iHOC)
         End If
         
