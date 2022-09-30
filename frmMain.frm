@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmMain 
-   Caption         =   "Cutting v-2.7"
+   Caption         =   "Cutting v-2.8"
    ClientHeight    =   7410
    ClientLeft      =   120
    ClientTop       =   465
@@ -48,6 +48,14 @@ End Sub
 
 Private Sub CheckBox2_Click()
  If CheckBox2.Value Then CheckBox2.Caption = "Fast" Else CheckBox2.Caption = "Slow"
+End Sub
+
+Private Sub ScrollBar1_Change()
+TextBox7.Value = ScrollBar1.Value
+End Sub
+
+Private Sub ScrollBar2_Change()
+TextBox6.Value = ScrollBar2.Value
 End Sub
 
 Private Sub SpinButton1_Change()
