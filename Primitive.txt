@@ -1,0 +1,26 @@
+$1 'Primitive
+Primitive 2.9
+onMoff 1.1
+outNC 1.0
+
+$2
+The command "Automate" creates along a Geometry.
+You can find this command in the "Cutting" menue. 
+
+$10 'Menue
+Primitive
+onMoff
+outNC
+
+$20 'Dialog
+Cutting
+Primitive
+onMoff
+outNC
+
+$99'OK und Abbrechen
+OK
+Cancel
+
+$100
+Length of tool is greader than the diameter
