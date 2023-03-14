@@ -237,12 +237,12 @@ With LDI
     .LeadIn = acamLeadBOTH
     .LengthIn = CDbl(frmMain.TextBox9.Value)
     .RadiusIn = CDbl(frmMain.TextBox9.Value)
-    .AngleIn = CInt(frmMain.TextBox8.Value)
+    .AngleIn = CDbl(frmMain.TextBox8.Value)
     .LineArcInTangential = True
     .LeadOut = acamLeadBOTH
     .LengthOut = CDbl(frmMain.TextBox9.Value)
     .RadiusOut = CDbl(frmMain.TextBox9.Value)
-    .AngleOut = CInt(frmMain.TextBox8.Value)
+    .AngleOut = CDbl(frmMain.TextBox8.Value)
     .LineArcOutTangential = True
 End With
 ' (re)set the new leaddata for the milldata
@@ -287,10 +287,10 @@ check = frmMain.CheckBox1.Value
     
         If (I Mod 2 <> 0) Then
             MD.SetLeadData LDI
-            TpsIn(I).SetLeadInOutAuto acamLeadBOTH, acamLeadBOTH, CInt(frmMain.TextBox9.Value), CInt(frmMain.TextBox9.Value), CInt(frmMain.TextBox8.Value), False, False, 0
+            TpsIn(I).SetLeadInOutAuto acamLeadBOTH, acamLeadBOTH, CDbl(frmMain.TextBox9.Value), CDbl(frmMain.TextBox9.Value), CDbl(frmMain.TextBox8.Value), False, False, 0
         Else:
             MD.SetLeadData LDO
-            TpsIn(I).SetLeadInOutAuto acamLeadBOTH, acamLeadBOTH, CInt(frmMain.TextBox11.Value), CInt(frmMain.TextBox11.Value), CInt(frmMain.TextBox10.Value), False, False, 0
+            TpsIn(I).SetLeadInOutAuto acamLeadBOTH, acamLeadBOTH, CDbl(frmMain.TextBox11.Value), CDbl(frmMain.TextBox11.Value), CDbl(frmMain.TextBox10.Value), False, False, 0
         End If
         
         If check = False Then
