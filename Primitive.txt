@@ -1,7 +1,7 @@
 $1 'Primitive
-Primitive 3.4
+Primitive 3.5
 onMoff 1.1
-outNC 2.0
+outNC 2.2
 
 $2
 The command "Automate" creates along a Geometry.
