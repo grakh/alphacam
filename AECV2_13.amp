@@ -101,6 +101,7 @@ $LET INNC = 0
 $LET OUTCIR = 0
 $LET FULLG2 = 0
 $LET FULLG3 = 0
+$LET IHOC_MODE = 0 
 $----------------------- Main Program LEADING lines ----------------------------------------
 $12 Main Program LEADING lines
 [N] #DRYRUN%=0
@@ -171,7 +172,7 @@ N[N] CLN(DLA80)
 N[N] COR(CAN[KL_A]SD.WZRec.UD.Ed[KL_A]1[KL_Z].Geo.Ang[KL_Z],MAN30,FF0.1)
 $ENDIF
 N[N] ;
-N[N] G53 G153 G0 Z53
+N[N] G53 G153 G0 Z40
 N[N] ATR()
 N[N] G154.1 G154.2
 $IF GAT(8) = 1
@@ -211,7 +212,7 @@ N[N] ;
 ; Programmende
 [N] .PRGEND
 N[N] COR() ATR() TRS()
-N[N] G153 G53 G0 Z53
+N[N] G153 G53 G0 Z40
 N[N] X785 Y600
 $IF GAT(8) = 1
 N[N] P PERF(UP=1)
