@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-06 V1_4 (IHOC-Marke ausserhalb Kontur, GOTO .PART in $50/$60 auskommentiert)
 $--ÄNDERUNGEN: 2026-10-06 V1_3 (Konturmarken %SHAPE n BEGIN / END)
 $--ÄNDERUNGEN: 2026-10-06 V1_2 (M3 nur einmal am Programmanfang)
 $--ÄNDERUNGEN: 2025-12-05 V1_1
@@ -278,6 +279,16 @@ $ENDIF
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
+'' Messschleifen-Marke ausserhalb der Kontur (V1_4)
+$IF GAT(8) = 0
+$IF MESSLOOPEIN = 1
+$LET MESSLOOPEIN = 0
+$LET LOOP = LOOP + 1
+N[N] ;***** Begin of Loop (.SHAPE[LOOP]) *****
+[N] #IHOCNS?=TRUE
+[N] .SHAPE[LOOP]
+$ENDIF
+$ENDIF
 %SHAPE [SHAPE_NR] BEGIN
 $ENDIF
 ''
@@ -295,6 +306,16 @@ $21 3D Rapid Move in XYZ (MILL/ROUTER ONLY)
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
+'' Messschleifen-Marke ausserhalb der Kontur (V1_4)
+$IF GAT(8) = 0
+$IF MESSLOOPEIN = 1
+$LET MESSLOOPEIN = 0
+$LET LOOP = LOOP + 1
+N[N] ;***** Begin of Loop (.SHAPE[LOOP]) *****
+[N] #IHOCNS?=TRUE
+[N] .SHAPE[LOOP]
+$ENDIF
+$ENDIF
 %SHAPE [SHAPE_NR] BEGIN
 $ENDIF
 $IF GAT(8) = 1
@@ -442,15 +463,7 @@ $IF GAT(8) = 1
 $GOTO 99
 $ENDIF
 ''
-$IF FF + MESSLOOPEIN = 2
-$LET MESSLOOPEIN = 0
-$LET LOOP = LOOP + 1
-''++++++++++++++++++++ MessloopEin:  [MESSLOOPEIN]
-'';;N[N] ;40,1
-'';;N[N] ;***** Begin of Loop (.SHAPE[LOOP]) *****
-'';;[N] #IHOCNS?=TRUE
-'';;[N] .SHAPE[LOOP]
-$ENDIF
+'' Messschleifen-Marke .SHAPE[LOOP] -> $20/$21 vor %SHAPE BEGIN verschoben (V1_4)
 ''
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + SQR(IX**2 + IY**2 + IZ**2)
 ''
@@ -585,15 +598,7 @@ $IF IN + OUT + OVL + FULLG3 = 0
 $LET FULLG2 = FULLG2 + 1
 $ENDIF
 ''
-$IF FF + MESSLOOPEIN = 2
-$LET MESSLOOPEIN = 0
-$LET LOOP = LOOP + 1
-''++++++++++++++++++++ MessloopEin:  [MESSLOOPEIN]
-N[N] ;50,1
-N[N] ;***** Begin of Loop (.SHAPE[LOOP]) *****
-[N] #IHOCNS?=TRUE
-[N] .SHAPE[LOOP]
-$ENDIF
+'' Messschleifen-Marke .SHAPE[LOOP] -> $20/$21 vor %SHAPE BEGIN verschoben (V1_4)
 ''
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + (AIA*PI*R/180)
 ''
@@ -613,13 +618,13 @@ $ENDIF
 ''
 $IF FF = 1 
 $LET KONTUR = KONTUR + 1
-N[N] ; DLA Subject ;50,2
-N[N] (MSG, [FNM], SHAPE[LOOP], PART[KONTUR]) 
-N[N] SSDE[KL_A]SD.USR.ToolAdjust.ToolCompMode = [IHOC_MODE][KL_Z]
-[N] GOTO .PART[KONTUR]
-[N] .COL[KONTUR]
-N[N] TOOLDATA
-N[N] PREPART 
+'';;N[N] ; DLA Subject ;50,2
+'';;N[N] (MSG, [FNM], SHAPE[LOOP], PART[KONTUR]) 
+'';;N[N] SSDE[KL_A]SD.USR.ToolAdjust.ToolCompMode = [IHOC_MODE][KL_Z]
+'';;[N] GOTO .PART[KONTUR]
+'';;[N] .COL[KONTUR]
+'';;N[N] TOOLDATA
+'';;N[N] PREPART 
 $ENDIF
 $IF FF + TRCRAP = 34 
 N[N] G0 [COMP1] X[XAPO] Y[YAPO] %SCLN(2) ;50,3
@@ -704,15 +709,7 @@ $IF IN + OUT + OVL + FULLG2 = 0
 $LET FULLG3 = FULLG3 + 1
 $ENDIF
 ''
-$IF FF + MESSLOOPEIN = 2
-$LET MESSLOOPEIN = 0
-$LET LOOP = LOOP + 1
-''++++++++++++++++++++ MessloopEin:  [MESSLOOPEIN]
-N[N] ;60,1
-N[N] ;***** Begin of Loop (.SHAPE[LOOP]) *****
-[N] #IHOCNS?=TRUE
-[N] .SHAPE[LOOP]
-$ENDIF
+'' Messschleifen-Marke .SHAPE[LOOP] -> $20/$21 vor %SHAPE BEGIN verschoben (V1_4)
 ''
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + (AIA*PI*R/180)
 ''
@@ -732,13 +729,13 @@ $ENDIF
 ''
 $IF FF = 1 
 $LET KONTUR = KONTUR + 1
-N[N] ; DLA Subject ;60,2
-N[N] (MSG, [FNM], SHAPE[LOOP], PART[KONTUR]) 
-N[N] SSDE[KL_A]SD.USR.ToolAdjust.ToolCompMode = [IHOC_MODE][KL_Z]
-[N] GOTO .PART[KONTUR]
-[N] .COL[KONTUR]
-N[N] TOOLDATA
-N[N] PREPART 
+'';;N[N] ; DLA Subject ;60,2
+'';;N[N] (MSG, [FNM], SHAPE[LOOP], PART[KONTUR]) 
+'';;N[N] SSDE[KL_A]SD.USR.ToolAdjust.ToolCompMode = [IHOC_MODE][KL_Z]
+'';;[N] GOTO .PART[KONTUR]
+'';;[N] .COL[KONTUR]
+'';;N[N] TOOLDATA
+'';;N[N] PREPART 
 $ENDIF
 $IF FF + TRCRAP = 34 
 N[N] G0 [COMP1] X[XAPO] Y[YAPO] %SCLN(2) ;60,3
