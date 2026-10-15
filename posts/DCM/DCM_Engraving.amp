@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-06 V1_9 XAPO/YAPO in $21
 $--ÄNDERUNGEN: 2026-10-06 V1_8 (Debug-Kommentare am Zeilenende entfernt)
 $--ÄNDERUNGEN: 2026-10-06 V1_7 (G2/G3 in $50/$60 korrigiert, OUTCIR 50,16, $ENDIF in $100, Kommentar $210)
 $--ÄNDERUNGEN: 2026-10-06 V1_6 (M988/M991/M979/M996 am Anfang, M987/M992/M978 am Ende aktiv)
@@ -322,6 +323,9 @@ $ENDIF
 $ENDIF
 %SHAPE [SHAPE_NR] BEGIN
 $ENDIF
+'' Anfahrpunkt merken wie in $20 (fuer Zustellung in $40/$50/$60)
+$LET XAPO=AX
+$LET YAPO=AY
 $IF GAT(8) = 1
 N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] Z[GAZ-SAEGE] F500
 $ELSE
