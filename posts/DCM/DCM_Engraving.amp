@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-06 V1_6 (M988/M991/M979/M996 am Anfang, M987/M992/M978 am Ende aktiv)
 $--ÄNDERUNGEN: 2026-10-06 V1_5 (G0 mit F500 = 500 mm/s)
 $--ÄNDERUNGEN: 2026-10-06 V1_4 (IHOC-Marke ausserhalb Kontur, GOTO .PART in $50/$60 auskommentiert)
 $--ÄNDERUNGEN: 2026-10-06 V1_3 (Konturmarken %SHAPE n BEGIN / END)
@@ -136,10 +137,10 @@ N[N] G0 Z53 F500 % new
 '';; [N] ELSE #VIDEO?=FALSE
 '';;[N] ENDIF 
 N[N] %*********************************************************
-N[N] %M988 % Ext. Chip Suction Unit ON
-N[N] %M991 % Shutter Milling Spindle OPEN
-N[N] %M979 % Control Vacuum ON
-N[N] %M996 % Tool Cover DOWN
+N[N] M988 % Ext. Chip Suction Unit ON
+N[N] M991 % Shutter Milling Spindle OPEN
+N[N] M979 % Control Vacuum ON
+N[N] M996 % Tool Cover DOWN
 N[N] %***************************************************
 '';;$ENDIF
 $----------------------- Main Program TRAILING lines ----------------------------------------
@@ -166,9 +167,9 @@ N[N] % X785 Y600
 '';;N[N] M982 ; Shutter MicroPerf CLOSE
 '';;N[N] ;
 '';;$ENDIF
-N[N] %M987  % Ext. chip suction unit OFF
-N[N] %M992  % Shutter milling spindle CLOSE
-N[N] %M978  % Control Vacuum OFF
+N[N] M987  % Ext. chip suction unit OFF
+N[N] M992  % Shutter milling spindle CLOSE
+N[N] M978  % Control Vacuum OFF
 N[N] %
 N[N] %***** END OF PROGRAM ******************************
 N[N] %
