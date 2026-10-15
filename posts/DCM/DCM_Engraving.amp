@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-06 V1_5 (G0 mit F500 = 500 mm/s)
 $--ÄNDERUNGEN: 2026-10-06 V1_4 (IHOC-Marke ausserhalb Kontur, GOTO .PART in $50/$60 auskommentiert)
 $--ÄNDERUNGEN: 2026-10-06 V1_3 (Konturmarken %SHAPE n BEGIN / END)
 $--ÄNDERUNGEN: 2026-10-06 V1_2 (M3 nur einmal am Programmanfang)
@@ -109,7 +110,7 @@ N[N] G90 F50 % new
 '';;N[N] ;
 '';;N[N] G53 G153 G0 Z53 old
 N[N] G53 % new
-N[N] G0 Z53 % new
+N[N] G0 Z53 F500 % new
 '';;N[N] ATR()
 '';;N[N] G154.1 G154.2
 '';;$IF GAT(8) = 1
@@ -156,7 +157,7 @@ N[N] %
 '';;N[N] COR() ATR() TRS()
 '';;N[N] G153 G53 G0 Z53 % old
 N[N] G53 % new
-N[N] G0 Z53 % new
+N[N] G0 Z53 F500 % new
 N[N] % X785 Y600
 '';;$IF GAT(8) = 1
 '';;N[N] P PERF(UP=1)
@@ -296,8 +297,8 @@ $LET XAPO=AX
 $LET YAPO=AY
 ''
 $IF GAT(8) = 1
-N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] F30000 ;20,9
-N[N] G0 Z[GAZ-SAEGE] F10000 ;20,10
+N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] F500 ;20,9
+N[N] G0 Z[GAZ-SAEGE] F500 ;20,10
 $ENDIF
 ''
 $----------------------- RAPID MOVE in XYZ ----------------------------------
@@ -319,9 +320,9 @@ $ENDIF
 %SHAPE [SHAPE_NR] BEGIN
 $ENDIF
 $IF GAT(8) = 1
-N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] Z[GAZ-SAEGE] ;21,1
+N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] Z[GAZ-SAEGE] F500 ;21,1
 $ELSE
-N[N] G0 X[AX] Y[AY] Z[AZ] ;21,2
+N[N] G0 X[AX] Y[AY] Z[AZ] F500 ;21,2
 $ENDIF
 $----------------------- RAPID MOVE in Z ------------------------------------
 $----------------------------------------------------------------------------
@@ -370,7 +371,7 @@ $ENDIF
 $IF NO_Z = 1
 $LET NO_Z = 0
 $ELSEIF NO_Z = 0
-N[N] G0 Z[AZ] %25,2
+N[N] G0 Z[AZ] F500 %25,2
 ''L_R=[L_R] I_O=[I_O] MITTE=[MITTE] BAHNMITTE=[BAHNMITTE] HIDE=[HIDE]
 ''FFP=[FFP] LFP=[LFP] FRA=[FRA] LRB=[LRB] FF=[FF] LF=[LF] IN=[IN] OUT=[OUT]
 ''MC=[MC] TRC=[TRC] TRCRAP=[TRCRAP] INNC=[INNC] OUTNC=[OUTNC] OUTCIR=[OUTCIR] OVL=[OVL]
@@ -409,7 +410,7 @@ $ENDIF
 ''
 '' Modalzustand fuer naechste Kontur einheitlich setzen + Kontur-Endmarke (V1_3)
 $IF FRA + SHAPE_OPEN = 2
-N[N] G0 F50 % reset modal
+N[N] G0 F500 % reset modal
 %SHAPE [SHAPE_NR] END
 $LET SHAPE_OPEN = 0
 $ENDIF
@@ -438,7 +439,7 @@ N[N] ED01
 $IF NO_Z = 1
 $LET NO_Z = 0
 $ELSEIF NO_Z = 0
-N[N] G0 Z[GAZ-SAEGE] ;25,8
+N[N] G0 Z[GAZ-SAEGE] F500 ;25,8
 N[N] ;
 $ENDIF
 ''
@@ -492,23 +493,23 @@ $LET KONTUR = KONTUR + 1
 '';;N[N] PREPART 
 $ENDIF
 $IF FF + TRCRAP = 34 
-N[N] G0 [COMP1] X[XAPO] Y[YAPO] %SCLN(2) ;40,3
+N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500 %SCLN(2) ;40,3
 N[N] G1 Z[AZ] F[FD/ 60.0] ;40,4
 $ELSEIF FF + MITTE = 1101 
-N[N] G0 X[XAPO] Y[YAPO] ;40,5
+N[N] G0 X[XAPO] Y[YAPO] F500 ;40,5
 N[N] G1 Z[AZ] F[FD/ 60.0] 
 N[N] G1 X[AX] Y[AY] F[F/ 60.0] ;40,6
 $ELSEIF FF + TRCRAP + TRC + IN = 4005
-N[N] G0 [TC] X[XAPO] Y[YAPO] %SCLN(2) ;40,7
+N[N] G0 [TC] X[XAPO] Y[YAPO] F500 %SCLN(2) ;40,7
 N[N] G1 Z[AZ] F[FD/ 60.0] ;40,68
 $ELSEIF FF + TRC = 4005
-N[N] G0 X[XAPO] Y[YAPO] %40,9
+N[N] G0 X[XAPO] Y[YAPO] F500 %40,9
 N[N] G1 Z[AZ] F[FD/ 60.0] 
 '';;N[N] G1 [TC] X[AX] Y[AY] F[F/ 60.0] %SCLN(2) % old
 N[N] [TC] % new
 N[N] G1 X[AX] Y[AY] F[F/ 60.0] % new
 $ELSEIF FF + TRCRAP + TRC = 1
-N[N] G0 X[XAPO] Y[YAPO] ;40,10
+N[N] G0 X[XAPO] Y[YAPO] F500 ;40,10
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ENDIF
 ''
@@ -627,13 +628,13 @@ $LET KONTUR = KONTUR + 1
 '';;N[N] PREPART 
 $ENDIF
 $IF FF + TRCRAP = 34 
-N[N] G0 [COMP1] X[XAPO] Y[YAPO] %SCLN(2) ;50,3
+N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500 %SCLN(2) ;50,3
 N[N] G1 Z[AZ] F[FD/ 60.0] ;50,4
 $ELSEIF FF + BAHNMITTE = 2
-N[N] G0 X[XAPO] Y[YAPO] F[F/ 60.0] ;50,5
+N[N] G0 X[XAPO] Y[YAPO] F500 ;50,5
 N[N] G1 Z[AZ] F[FD/ 60.0] ;50,6
 $ELSEIF FF + TRCRAP = 1
-N[N] G0 [TC] X[XAPO] Y[YAPO] F[F/ 60.0] %SCLN(2) ;50,7
+N[N] G0 [TC] X[XAPO] Y[YAPO] F500 %SCLN(2) ;50,7
 N[N] G1 Z[AZ] F[FD/ 60.0] ;50,8
 $ENDIF
 ''
@@ -738,13 +739,13 @@ $LET KONTUR = KONTUR + 1
 '';;N[N] PREPART 
 $ENDIF
 $IF FF + TRCRAP = 34 
-N[N] G0 [COMP1] X[XAPO] Y[YAPO] %SCLN(2) ;60,3
+N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500 %SCLN(2) ;60,3
 N[N] G1 Z[AZ] F[FD/ 60.0] ;60,4
 $ELSEIF FF + BAHNMITTE = 2
-N[N] G0 X[XAPO] Y[YAPO] F[F/ 60.0] ;60,5
+N[N] G0 X[XAPO] Y[YAPO] F500 ;60,5
 N[N] G1 Z[AZ] F[FD/ 60.0] ;60,6
 $ELSEIF FF + TRCRAP = 1
-N[N] G0 [TC] X[XAPO] Y[YAPO] F[F/ 60.0] %SCLN(2) ;60,7
+N[N] G0 [TC] X[XAPO] Y[YAPO] F500 %SCLN(2) ;60,7
 N[N] G1 Z[AZ] F[FD/ 60.0] ;60,8
 $ENDIF
 ''
@@ -955,33 +956,33 @@ $------------------------ DRILLING/TAPPING CYCLES ---------------------------
 $200 CANCEL drill/tapping cycle
 N[N] G1 Z[ZS] F5000 ;200,1
 $205 First Hole in SUBROUTINE. NOTE $205/206 apply to ALL drill/peck etc cycles
-N[N] G0 X[AX] Y[AY] ;205,1
-N[N] G0 Z[ZR] ;205,2
+N[N] G0 X[AX] Y[AY] F500 ;205,1
+N[N] G0 Z[ZR] F500 ;205,2
 N[N] G1 Z[ZB] F[F/ 60.0] ;205,3
 $206 Next holes in Subroutine
-N[N] G0 X[AX] Y[AY] ;206,1
-N[N] G0 Z[ZR] ;206,2
+N[N] G0 X[AX] Y[AY] F500 ;206,1
+N[N] G0 Z[ZR] F500 ;206,2
 N[N] G1 Z[ZB] F[F/ 60.0] ;206,3
 $----------------------------------------------------------------------------
 DRILL cycle - traverse to next hole at SAFE RAPID level [ZS]
 $210 First Hole
-N[N] G0 X[AX] Y[AY] ;210,1
+N[N] G0 X[AX] Y[AY] F500 ;210,1
 N[N] G1 Z[ZS] F5000 ;210,2
-N[N] G0 Z[ZR] ;210,3
+N[N] G0 Z[ZR] F500 ;210,3
 N[N] G1 Z[ZB] F[F/ 60.0] ;211,4
 $211 Next holes
 N[N] G1 Z[ZS] F5000 ;211,1
-N[N] G0 X[AX] Y[AY] ;211,2
+N[N] G0 X[AX] Y[AY] F500 ;211,2
 N[N] G1 Z[ZB] F[F/ 60.0] ;211,3
 $----------------------------------------------------------------------------
 DRILL cycle - traverse to next hole at RETRACT level [ZR]
 $214 First Hole
-N[N] G0 Z[ZS] ;214,1
-N[N] G0 X[AX] Y[AY] ;214,2
+N[N] G0 Z[ZS] F500 ;214,1
+N[N] G0 X[AX] Y[AY] F500 ;214,2
 N[N] G1 Z[ZB] F[F/ 60.0] ;214,3
 $215 Next holes
 N[N] G1 Z[ZR] F[F/ 60.0] ;215,1
-N[N] G0 X[AX] Y[AY] ;215,2
+N[N] G0 X[AX] Y[AY] F500 ;215,2
 N[N] G1 Z[ZB] F[F/ 60.0] ;215,3
 N[N] G1 Z[ZR] F[F/ 60.0] ;215,4
 $----------------------------------------------------------------------------
