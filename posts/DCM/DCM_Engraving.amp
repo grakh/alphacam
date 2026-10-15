@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-15 V1_18 M978 (Vakuum AUS) am Programmende entfernt
 $--ÄNDERUNGEN: 2026-10-15 V1_17 Jede Bohrung als eigener %SHAPE-Block
 $--ÄNDERUNGEN: 2026-10-15 V1_16 Bohrzyklen $200-$215 korrigiert (F5000 entfernt, Rueckzug vor XY, Eilgang auf ZR)
 $--ÄNDERUNGEN: 2026-10-15 V1_15 AEC/MTX-Code entfernt (MicroPerf, DryRun, DLA/SCLN, Messzyklus, Abfragen), ;-Zeilen in $220-$245 entfernt
@@ -108,7 +109,6 @@ N[N] G0 Z53 F500
 N[N] % X785 Y600
 N[N] M987  % Ext. chip suction unit OFF
 N[N] M992  % Shutter milling spindle CLOSE
-N[N] M978  % Control Vacuum OFF
 N[N] %
 N[N] %***** END OF PROGRAM ******************************
 N[N] %
