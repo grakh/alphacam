@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-15 V1_17 Jede Bohrung als eigener %SHAPE-Block
 $--ÄNDERUNGEN: 2026-10-15 V1_16 Bohrzyklen $200-$215 korrigiert (F5000 entfernt, Rueckzug vor XY, Eilgang auf ZR)
 $--ÄNDERUNGEN: 2026-10-15 V1_15 AEC/MTX-Code entfernt (MicroPerf, DryRun, DLA/SCLN, Messzyklus, Abfragen), ;-Zeilen in $220-$245 entfernt
 $--ÄNDERUNGEN: 2026-10-15 V1_14 Bereinigt: auskommentierter AEC-Code und Kommentare entfernt
@@ -436,36 +437,76 @@ $------------------------ DRILLING/TAPPING CYCLES ---------------------------
 
 $200 CANCEL drill/tapping cycle
 N[N] G0 Z[ZS] F500
+$IF SHAPE_OPEN = 1
+N[N] %SHAPE [SHAPE_NR] END
+$LET SHAPE_OPEN = 0
+$ENDIF
 $205 First Hole in SUBROUTINE. NOTE $205/206 apply to ALL drill/peck etc cycles
+$IF SHAPE_OPEN = 0
+$LET SHAPE_NR = SHAPE_NR + 1
+$LET SHAPE_OPEN = 1
+N[N] %SHAPE [SHAPE_NR] BEGIN
+$ENDIF
 N[N] G0 Z[ZS] F500
 N[N] G0 X[AX] Y[AY] F500
 N[N] G0 Z[ZR] F500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $206 Next holes in Subroutine
 N[N] G0 Z[ZR] F500
+$IF SHAPE_OPEN = 1
+N[N] %SHAPE [SHAPE_NR] END
+$LET SHAPE_OPEN = 0
+$ENDIF
+$LET SHAPE_NR = SHAPE_NR + 1
+$LET SHAPE_OPEN = 1
+N[N] %SHAPE [SHAPE_NR] BEGIN
 N[N] G0 X[AX] Y[AY] F500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $----------------------------------------------------------------------------
 DRILL cycle - traverse to next hole at SAFE RAPID level [ZS]
 $210 First Hole
+$IF SHAPE_OPEN = 0
+$LET SHAPE_NR = SHAPE_NR + 1
+$LET SHAPE_OPEN = 1
+N[N] %SHAPE [SHAPE_NR] BEGIN
+$ENDIF
 N[N] G0 Z[ZS] F500
 N[N] G0 X[AX] Y[AY] F500
 N[N] G0 Z[ZR] F500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $211 Next holes
 N[N] G0 Z[ZS] F500
+$IF SHAPE_OPEN = 1
+N[N] %SHAPE [SHAPE_NR] END
+$LET SHAPE_OPEN = 0
+$ENDIF
+$LET SHAPE_NR = SHAPE_NR + 1
+$LET SHAPE_OPEN = 1
+N[N] %SHAPE [SHAPE_NR] BEGIN
 N[N] G0 X[AX] Y[AY] F500
 N[N] G0 Z[ZR] F500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $----------------------------------------------------------------------------
 DRILL cycle - traverse to next hole at RETRACT level [ZR]
 $214 First Hole
+$IF SHAPE_OPEN = 0
+$LET SHAPE_NR = SHAPE_NR + 1
+$LET SHAPE_OPEN = 1
+N[N] %SHAPE [SHAPE_NR] BEGIN
+$ENDIF
 N[N] G0 Z[ZS] F500
 N[N] G0 X[AX] Y[AY] F500
 N[N] G0 Z[ZR] F500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $215 Next holes
 N[N] G0 Z[ZR] F500
+$IF SHAPE_OPEN = 1
+N[N] %SHAPE [SHAPE_NR] END
+$LET SHAPE_OPEN = 0
+$ENDIF
+$LET SHAPE_NR = SHAPE_NR + 1
+$LET SHAPE_OPEN = 1
+N[N] %SHAPE [SHAPE_NR] BEGIN
 N[N] G0 X[AX] Y[AY] F500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $----------------------------------------------------------------------------
