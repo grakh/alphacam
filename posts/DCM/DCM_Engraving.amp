@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-15 V1_13 Bahnlaenge als eine Zeile %PATH ... MM
 $--ÄNDERUNGEN: 2026-10-15 V1_12 Kommentare mit % statt ;, %SHAPE-Marken mit Satznummer
 $--ÄNDERUNGEN: 2026-10-15 V1_11 Marke .SHAPE[LOOP] und IHOC-Hoehenmessung auskommentiert
 $--ÄNDERUNGEN: 2026-10-06 V1_10 $50/$60: FF + BAHNMITTE = 2101 (vorher = 2, nie erfuellt)
@@ -405,15 +406,14 @@ $ENDIF
 ''
 $IF FRA = 1
 '';;N[N] WAIT ;25,6
-N[N] % Programmed NC-path (actual shape [KL_A]m[KL_Z])
-N[N] % [STRECKE_NUTZEN/1000][KL_Z]
+N[N] %PATH [STRECKE_NUTZEN] MM
 '';;N[N] SSDE[KL_A]SD.USR.BDE.ProgNCPathShape = [STRECKE_NUTZEN/1000][KL_Z]
 '';;N[N] ; Milled NC-Path Counter (sub length [KL_A]m[KL_Z]) + Programmed NC-Path length (actual shape [KL_A]m[KL_Z])
 '';;N[N] SSDE[KL_A]SD.USR.BDE.MilledNCPathSubtotal = SD.USR.BDE.MilledNCPathSubtotal + SD.USR.BDE.ProgNCPathShape[KL_Z]
 '';;N[N] ; Milled NC-Path Counter (total length [KL_A]m[KL_Z]) + Programmed NC-Path length (actual shape [KL_A]m[KL_Z])
 '';;N[N] SSDE[KL_A]SD.USR.BDE.MilledNCPathTotal = SD.USR.BDE.MilledNCPathTotal + SD.USR.BDE.ProgNCPathShape[KL_Z]
 '';;N[N] WAIT
-N[N] %
+'';;N[N] %
 '';;N[N] POSTPART ;25,7
 '';;N[N] ;
 $ENDIF
