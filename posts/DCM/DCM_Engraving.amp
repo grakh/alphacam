@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-15 V1_12 Kommentare mit % statt ;, %SHAPE-Marken mit Satznummer
 $--ÄNDERUNGEN: 2026-10-15 V1_11 Marke .SHAPE[LOOP] und IHOC-Hoehenmessung auskommentiert
 $--ÄNDERUNGEN: 2026-10-06 V1_10 $50/$60: FF + BAHNMITTE = 2101 (vorher = 2, nie erfuellt)
 $--ÄNDERUNGEN: 2026-10-06 V1_9 XAPO/YAPO in $21
@@ -152,7 +153,7 @@ $----------------------- Main Program TRAILING lines ---------------------------
 $15 Main Program TRAILING lines
 '' Noch offene Kontur schliessen (V1_3)
 $IF SHAPE_OPEN = 1
-%SHAPE [SHAPE_NR] END
+N[N] %SHAPE [SHAPE_NR] END
 $LET SHAPE_OPEN = 0
 $ENDIF
 N[N] %
@@ -296,7 +297,7 @@ $LET LOOP = LOOP + 1
 '';;[N] .SHAPE[LOOP]
 $ENDIF
 $ENDIF
-%SHAPE [SHAPE_NR] BEGIN
+N[N] %SHAPE [SHAPE_NR] BEGIN
 $ENDIF
 ''
 $LET XAPO=AX
@@ -323,7 +324,7 @@ $LET LOOP = LOOP + 1
 '';;[N] .SHAPE[LOOP]
 $ENDIF
 $ENDIF
-%SHAPE [SHAPE_NR] BEGIN
+N[N] %SHAPE [SHAPE_NR] BEGIN
 $ENDIF
 '' Anfahrpunkt merken wie in $20 (fuer Zustellung in $40/$50/$60)
 $LET XAPO=AX
@@ -420,7 +421,7 @@ $ENDIF
 '' Modalzustand fuer naechste Kontur einheitlich setzen + Kontur-Endmarke (V1_3)
 $IF FRA + SHAPE_OPEN = 2
 N[N] G0 F500
-%SHAPE [SHAPE_NR] END
+N[N] %SHAPE [SHAPE_NR] END
 $LET SHAPE_OPEN = 0
 $ENDIF
 ''
@@ -449,12 +450,12 @@ $IF NO_Z = 1
 $LET NO_Z = 0
 $ELSEIF NO_Z = 0
 N[N] G0 Z[GAZ-SAEGE] F500
-N[N] ;
+N[N] %
 $ENDIF
 ''
 '' Kontur-Endmarke MicroPerf (V1_3)
 $IF FRA + SHAPE_OPEN = 2
-%SHAPE [SHAPE_NR] END
+N[N] %SHAPE [SHAPE_NR] END
 $LET SHAPE_OPEN = 0
 $ENDIF
 ''
@@ -535,7 +536,7 @@ N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0]
 ''
 $ELSEIF FF + MOT = 11
 N[N] SSDE[KL_A]SD.USR.ToolAdjust.ToolCompMode = 1[KL_Z]
-N[N] ;
+N[N] %
 N[N] G1 Z[AZ] F[FD/ 60.0]
 N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0]
 ''
@@ -899,15 +900,15 @@ N[N] G0 V[KL_A][WINKEL_S]-#PERFANG![KL_Z] F3000
 $LL 99
 $-------------------------- SUBROUTINES -------------------------------------
 $90 CALL subroutine.  Use [SN] for subroutine number.
-N[N] ;***** Call Subroutine (UP [SN]) *****
+N[N] %***** Call Subroutine (UP [SN]) *****
 N[N] LP UP[SN]
-N[N] ;*************************************
-N[N] ;
+N[N] %*************************************
+N[N] %
 $----------------------------------------------------------------------------
 $100 BEGIN subroutine. Use [SN] for subroutine number.
 $LET CNT_SUB = CNT_SUB + 1
-N[N] ;
-N[N] ;***** Begin of Contour (UP [SN]) *****
+N[N] %
+N[N] %***** Begin of Contour (UP [SN]) *****
 N[N] LPS UP[SN]
 ''
 '' Ist DryRun bereits im selben UP durchgelaufen ?
@@ -926,7 +927,7 @@ $LET DRYRUN = SN
 [N] .PRENC[SN]
 ''
 N[N] PEND
-N[N] ;***************************************************
+N[N] %***************************************************
 $------------------- REFERENCE ZERO or ORIGIN SHIFT -------------------------
 $120 Origin shift. Use [OX] and [OY] for values to shift by)
 N[N] TRS(X[OX],Y[OY],Z[OZ])
