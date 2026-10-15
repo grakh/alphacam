@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-15 V1_11 Marke .SHAPE[LOOP] und IHOC-Hoehenmessung auskommentiert
 $--ÄNDERUNGEN: 2026-10-06 V1_10 $50/$60: FF + BAHNMITTE = 2101 (vorher = 2, nie erfuellt)
 $--ÄNDERUNGEN: 2026-10-06 V1_9 XAPO/YAPO in $21
 $--ÄNDERUNGEN: 2026-10-06 V1_8 (Debug-Kommentare am Zeilenende entfernt)
@@ -290,9 +291,9 @@ $IF GAT(8) = 0
 $IF MESSLOOPEIN = 1
 $LET MESSLOOPEIN = 0
 $LET LOOP = LOOP + 1
-N[N] ;***** Begin of Loop (.SHAPE[LOOP]) *****
-[N] #IHOCNS?=TRUE
-[N] .SHAPE[LOOP]
+'';;N[N] ;***** Begin of Loop (.SHAPE[LOOP]) *****
+'';;[N] #IHOCNS?=TRUE
+'';;[N] .SHAPE[LOOP]
 $ENDIF
 $ENDIF
 %SHAPE [SHAPE_NR] BEGIN
@@ -317,9 +318,9 @@ $IF GAT(8) = 0
 $IF MESSLOOPEIN = 1
 $LET MESSLOOPEIN = 0
 $LET LOOP = LOOP + 1
-N[N] ;***** Begin of Loop (.SHAPE[LOOP]) *****
-[N] #IHOCNS?=TRUE
-[N] .SHAPE[LOOP]
+'';;N[N] ;***** Begin of Loop (.SHAPE[LOOP]) *****
+'';;[N] #IHOCNS?=TRUE
+'';;[N] .SHAPE[LOOP]
 $ENDIF
 $ENDIF
 %SHAPE [SHAPE_NR] BEGIN
@@ -427,13 +428,13 @@ $IF MESSZYKLUSEIN + FRA = 2
 $LET MESSZYKLUSEIN  = 0
 $LET MESSLOOPEIN = 1
 ''
-N[N] ;***** Altitude measurement and compensation MP([LOOP]) *****
-[N] #MPX!=[MESSPKT_X] : #MPY!=[MESSPKT_Y]
-N[N] P IHOC(PD=0)
-[N] IF (#IHOC? = TRUE) AND (#IHOCPL? = TRUE) THEN GOTO .SHAPE[LOOP] ENDIF
-N493 ;
-N[N] ;*********************************************************
-N[N] ;
+'';;N[N] ;***** Altitude measurement and compensation MP([LOOP]) *****
+'';;[N] #MPX!=[MESSPKT_X] : #MPY!=[MESSPKT_Y]
+'';;N[N] P IHOC(PD=0)
+'';;[N] IF (#IHOC? = TRUE) AND (#IHOCPL? = TRUE) THEN GOTO .SHAPE[LOOP] ENDIF
+'';;N493 ;
+'';;N[N] ;*********************************************************
+'';;N[N] ;
 $ENDIF
 ''
 ''+++++++ MESSPKT-XWERT:  [MESSPKT_X]
