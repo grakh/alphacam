@@ -1,4 +1,5 @@
 $--POSTPROCESSOR https://hansmill.ru  DCM engraving machine, controller HCFA HCQ9P-1700
+$--CHANGES: 2026-10-15 V1_23 G/F/Z modal again; full G/F/Z output at start of each %SHAPE block ($MODAL OFF until first feed move)
 $--CHANGES: 2026-10-15 V1_22 G0 speed as FF500 (CODESYS SMC), G/F/Z always output, modal reset line removed; comments % and G41/G42 as in V1_20
 $--CHANGES: 2026-10-15 V1_20 No subroutines and no TRS origin shift: code output in full
 $--CHANGES: 2026-10-15 V1_19 Separators and template text removed, comments translated to English
@@ -22,6 +23,7 @@ $--CHANGES: 2026-10-06 V1_2 M3 only once at program start
 $--CHANGES: 2025-12-05 V1_1 Initial version
 $5 Call external program
 $10 File LEADING lines
+$MODAL ON
 $LET STRECKE_NUTZEN = 0
 $LET NO_Z = 1
 $LET SPEED = 0
@@ -70,7 +72,6 @@ N[N] %
 N[N] M30
 $17 File TRAILING Lines
 $20 Rapid Move in XY (MILL/ROUTER/FLAME/LASER) or XZ (LATHE) only
-$MODAL ON
 $LET STRECKE_NUTZEN = 0
 $IF MC = 1
 $LET TRCRAP = 33
@@ -108,6 +109,7 @@ $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] BEGIN
+$MODAL OFF
 $ENDIF
 $LET XAPO=AX
 $LET YAPO=AY
@@ -116,6 +118,7 @@ $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] BEGIN
+$MODAL OFF
 $ENDIF
 $LET XAPO=AX
 $LET YAPO=AY
@@ -147,7 +150,6 @@ $LET OUTCIR = 0
 $30 Lines BEFORE a rapid move if Z levels are not used eg Laser or Geometry
 $35 Lines AFTER a rapid move if Z levels are not used eg Laser or Geometry
 $40  Machining FEED lines
-$MODAL ON
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + SQR(IX**2 + IY**2 + IZ**2)
 $IF MC = 1
 $LET TRC = 4004
@@ -211,7 +213,9 @@ $IF HIDE = 1
 $LET HIDE = 0
 $ENDIF
 $LET OUTNC = 0
-$MODAL OFF
+$IF FF = 1
+$MODAL ON
+$ENDIF
 $50 Feed CW arc (APS will automatically limit arcs to 180 degrees maximum)
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + (AIA*PI*R/180)
 $IF MC = 1
@@ -268,6 +272,9 @@ $IF HIDE = 1
 $LET HIDE = 0
 $ENDIF
 $LET OUTNC = 0
+$IF FF = 1
+$MODAL ON
+$ENDIF
 $60 Feed CCW arc (APS will automatically limit arcs to 180 degrees maximum)
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + (AIA*PI*R/180)
 $IF MC = 1
@@ -324,6 +331,9 @@ $IF HIDE = 1
 $LET HIDE = 0
 $ENDIF
 $LET OUTNC = 0
+$IF FF = 1
+$MODAL ON
+$ENDIF
 $70 Cancel current tool.  Use [T] for current tool number if required.
 $75 Code for CLOCKWISE spindle rotation - entered into variable RT
 $76 Code for COUNTER-CLOCKWISE spindle rotation - entered into variable RT
@@ -360,11 +370,13 @@ $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] BEGIN
+$MODAL OFF
 $ENDIF
 N[N] G0 Z[ZS] FF500
 N[N] G0 X[AX] Y[AY] FF500
 N[N] G0 Z[ZR] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
+$MODAL ON
 $206 Next holes in Subroutine
 N[N] G0 Z[ZR] FF500
 $IF SHAPE_OPEN = 1
@@ -374,18 +386,22 @@ $ENDIF
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] BEGIN
+$MODAL OFF
 N[N] G0 X[AX] Y[AY] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
+$MODAL ON
 $210 First Hole
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] BEGIN
+$MODAL OFF
 $ENDIF
 N[N] G0 Z[ZS] FF500
 N[N] G0 X[AX] Y[AY] FF500
 N[N] G0 Z[ZR] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
+$MODAL ON
 $211 Next holes
 N[N] G0 Z[ZS] FF500
 $IF SHAPE_OPEN = 1
@@ -395,19 +411,23 @@ $ENDIF
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] BEGIN
+$MODAL OFF
 N[N] G0 X[AX] Y[AY] FF500
 N[N] G0 Z[ZR] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
+$MODAL ON
 $214 First Hole
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] BEGIN
+$MODAL OFF
 $ENDIF
 N[N] G0 Z[ZS] FF500
 N[N] G0 X[AX] Y[AY] FF500
 N[N] G0 Z[ZR] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
+$MODAL ON
 $215 Next holes
 N[N] G0 Z[ZR] FF500
 $IF SHAPE_OPEN = 1
@@ -417,8 +437,10 @@ $ENDIF
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] BEGIN
+$MODAL OFF
 N[N] G0 X[AX] Y[AY] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
+$MODAL ON
 $220 First hole
 $221 Next holes
 $224 First hole
@@ -432,10 +454,10 @@ $241 Next holes
 $244 First Hole
 $245 Next holes
 $500 Modal Text  (Will not be repeated in following lines)
-
+G0 G1 G2 G3
 
 $502 Modal ABSOLUTE Values (Will not be repeated if the VALUE is the same)
-
+Z F
 $504 Modal INCREMENTAL Values (Will not be put into NC code if VALUE is ZERO)
 
 $510 X Y Z I J K values must have + as well as - signs (1 = yes, 0 = no)
