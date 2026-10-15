@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-15 V1_15 AEC/MTX-Code entfernt (MicroPerf, DryRun, DLA/SCLN, Messzyklus, Abfragen), ;-Zeilen in $220-$245 entfernt
 $--ÄNDERUNGEN: 2026-10-15 V1_14 Bereinigt: auskommentierter AEC-Code und Kommentare entfernt
 $--ÄNDERUNGEN: 2026-10-15 V1_13 Bahnlaenge als eine Zeile %PATH ... MM
 $--ÄNDERUNGEN: 2026-10-15 V1_12 Kommentare mit % statt ;, %SHAPE-Marken mit Satznummer
@@ -14,37 +15,63 @@ $--ÄNDERUNGEN: 2026-10-06 V1_3 (Konturmarken %SHAPE n BEGIN / END)
 $--ÄNDERUNGEN: 2026-10-06 V1_2 (M3 nur einmal am Programmanfang)
 $--ÄNDERUNGEN: 2025-12-05 V1_1
 $------------------------- PROGRAM LEADING/TRAILING LINES -------------------
+$----------------------- File LEADING lines ----------------------------------------
+$----------------------- Main Program LEADING lines ----------------------------------------
+$----------------------- Main Program TRAILING lines ----------------------------------------
+$----------------------- File TRAILING Lines ----------------------------------------
+$----------------------- RAPID MOVES ----------------------------------------
+$----------------------- RAPID MOVE in XYZ ----------------------------------
+$----------------------- RAPID MOVE in Z ------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------- MACHINING FEED MOVES -------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$------------------------ TOOL CHANGES --------------------------------------
+$-------------------------- SUBROUTINES -------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$------------------- REFERENCE ZERO or ORIGIN SHIFT -------------------------
+$----------------------------------------------------------------------------
+$----------------------- MACHINE TOOL COMPENSATION --------------------------
+$----------------------- COOLANT OFF/MIST/FLOOD/TOOL CODES ------------------
+$------------------------ DRILLING/TAPPING CYCLES ---------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$-------------------------- GENERAL FORMATS ---------------------------------
+$-------------------------- NUMBER FORMATS ----------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$----------------------------------------------------------------------------
+$------------------------ RAPIDS and TOOL CHANGE TIMES ----------------------
+$--------------------------- USER VARIABLES ---------------------------------
+$-------------------------- USER DEFINED CODE -------------------------------
+$-------------------------- Post End ----------------------------------------
+$-------------------------- MAKRO-ATTRIBUTE
+$------------------------- PROGRAM LEADING/TRAILING LINES -------------------
 $5 Externes Programm einbinden
 $----------------------- File LEADING lines ----------------------------------------
 $10 File LEADING lines
-$LET CNT_SUB = 0
-$LET ANZ_SubOp = GAT(4)
-$LET ANZ_SubOpLin = GAT(5)
-$LET ANZ_OP = GAT(6)
-$LET UP_NR = 1
-$LET KL_A = "["
-$LET KL_Z = "]"
-$LET COUNT = 0
-$LET LOOP = 0
-$LET MESSLOOPEIN = 1
-$LET TC_RAPID = 0
 $LET STRECKE_NUTZEN = 0
 $LET NO_Z = 1
 $LET SPEED = 0
 $LET SPINDLE_ON = 0
 $LET SHAPE_NR = 0
 $LET SHAPE_OPEN = 0
-$LET KONTUR = 0
-$LET SCLN = 0
-$LET SCLN2 = 0
 $LET HIDE = 0
-$LET DRYRUN = 0
 $LET TRCRAP = 0
 $LET OUTNC = 0
-$LET INNC = 0
 $LET OUTCIR = 0
-$LET FULLG2 = 0
-$LET FULLG3 = 0
 $----------------------- Main Program LEADING lines ----------------------------------------
 $12 Main Program LEADING lines
 N[N] %****************************************************
@@ -55,7 +82,6 @@ N[N] %****************************************************
 N[N] %
 N[N] %***** Presettings *********************************
 N[N] %
-$LET EQUIDISTANT=[EQUIDISTANT]
 N[N] G17
 N[N] G90 F50
 N[N] G53
@@ -85,9 +111,6 @@ N[N] %
 N[N] %***** END OF PROGRAM ******************************
 N[N] %
 N[N] M30
-$IF CNT_SUB <> ANZ_SubOp
-$MSG !! Error: Numbers of UP and Sub Op´s not equal !!
-$ENDIF
 $----------------------- File TRAILING Lines ----------------------------------------
 $17 File TRAILING Lines
 $----------------------- RAPID MOVES ----------------------------------------
@@ -96,129 +119,55 @@ $MODAL ON
 $LET STRECKE_NUTZEN = 0
 $IF MC = 1
 $LET TRCRAP = 33
-$LET COMP = TC
-$LET TRC = 0
+$LET COMP1 = TC
 $ELSE
-$LET COMP = ""
 $LET TRCRAP = 0
+$LET COMP1 = ""
 $ENDIF
-$LET COMP1=COMP
-$IF FIRST_RAPID = 1
-$LET FIRST_RAPID = 0
-$ENDIF
-$LET LINKS = 0
-$LET RECHTS = 0
 $LET MITTE = 0
-$LET INNEN = 0
-$LET AUSSEN = 0
 $LET BAHNMITTE = 0
 $LET OFFEN = 0
 $LET TRC = 0
-$LET IHOC_MODE = 0
-$IF L_R = 1
-$LET LINKS = 1001
-$ELSEIF L_R = -1
-$LET RECHTS = 1010
-$ELSEIF L_R = 0
+$IF L_R = 0
 $LET MITTE = 1100
 $ENDIF
-$IF I_O = 1
-$LET INNEN = 2001
-$ELSEIF I_O = -1
-$LET AUSSEN = 2010
-$ELSEIF I_O = 0
+$IF I_O = 0
 $LET BAHNMITTE = 2100
 $ELSEIF I_O = -2
 $LET OFFEN = 3001
 $ENDIF
-$IF IN = 1
-$LET INNC = 5000
-$ENDIF
 $IF OUT = 1
 $LET OUTNC = 5100
 $ENDIF
-$IF MITTE + BAHNMITTE > 0
-$LET IHOC_MODE = 1
-$ENDIF
-$IF FRA + MC = 2
-$LET COMP = TC
-$ELSE
-$LET COMP = ""
-$ENDIF 
-$LET SPEED = [S] 
+$LET SPEED = [S]
 $IF SPEED < 15000
 $LET SPEED = SPEED * 100
 $ELSEIF SPEED > 100000
 $LET SPEED = 100000
 $ENDIF
-$IF GAT(8) + SPINDLE_ON = 0
+$IF SPINDLE_ON = 0
 N[N] M3 K[SPEED]
 $LET SPINDLE_ON = 1
 $ENDIF
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
-$IF GAT(8) = 0
-$IF MESSLOOPEIN = 1
-$LET MESSLOOPEIN = 0
-$LET LOOP = LOOP + 1
-$ENDIF
-$ENDIF
 N[N] %SHAPE [SHAPE_NR] BEGIN
 $ENDIF
 $LET XAPO=AX
 $LET YAPO=AY
-$IF GAT(8) = 1
-N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] F500
-N[N] G0 Z[GAZ-SAEGE] F500
-$ENDIF
 $----------------------- RAPID MOVE in XYZ ----------------------------------
 $21 3D Rapid Move in XYZ (MILL/ROUTER ONLY)
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
-$IF GAT(8) = 0
-$IF MESSLOOPEIN = 1
-$LET MESSLOOPEIN = 0
-$LET LOOP = LOOP + 1
-$ENDIF
-$ENDIF
 N[N] %SHAPE [SHAPE_NR] BEGIN
 $ENDIF
 $LET XAPO=AX
 $LET YAPO=AY
-$IF GAT(8) = 1
-N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] Z[GAZ-SAEGE] F500
-$ELSE
 N[N] G0 X[AX] Y[AY] Z[AZ] F500
-$ENDIF
 $----------------------- RAPID MOVE in Z ------------------------------------
-$----------------------------------------------------------------------------
 $25 Rapid Move in Z only (MILL etc)
-$IF GAT(8) = 1
-$GOTO 99
-$ENDIF
-$IF FIRST_RAPID = 1
-$ELSE
-$ENDIF
-$IF FULLG2 + FULLG3 = 3
-$LET SCLN2 = 1
-$GOTO 200 
-$ENDIF
-$LET SCLN2 = SCLN 
-$IF SCLN2 > 81
-$LET SCLN2 = 80
-$ELSEIF SCLN2 <= 3 
-$LET SCLN2 = 1
-$ELSEIF SCLN2 >= 4
-$LET SCLN2 = SCLN2 - 2
-$ENDIF
-$LL 200
-$LET FULLG2 = 0
-$LET FULLG3 = 0
-$IF FRA = 1
-$LET SCLN = 0
-$ENDIF
 $IF NO_Z = 1
 $LET NO_Z = 0
 $ELSEIF NO_Z = 0
@@ -241,28 +190,8 @@ N[N] G0 F500
 N[N] %SHAPE [SHAPE_NR] END
 $LET SHAPE_OPEN = 0
 $ENDIF
-$IF MESSZYKLUSEIN + FRA = 2
-$LET MESSZYKLUSEIN  = 0
-$LET MESSLOOPEIN = 1
-$ENDIF
-$GOTO 100
-$LL 99
-N[N] ATR(Z[KL_A]ZOFFMP![KL_Z])
-N[N] ED01
-$IF NO_Z = 1
-$LET NO_Z = 0
-$ELSEIF NO_Z = 0
-N[N] G0 Z[GAZ-SAEGE] F500
-N[N] %
-$ENDIF
-$IF FRA + SHAPE_OPEN = 2
-N[N] %SHAPE [SHAPE_NR] END
-$LET SHAPE_OPEN = 0
-$ENDIF
-$LET INNC = 0
 $LET OUTNC = 0
 $LET OUTCIR = 0
-$LL 100
 $----------------------------------------------------------------------------
 $30 Lines BEFORE a rapid move if Z levels are not used eg Laser or Geometry
 $----------------------------------------------------------------------------
@@ -270,28 +199,19 @@ $35 Lines AFTER a rapid move if Z levels are not used eg Laser or Geometry
 $----------------------- MACHINING FEED MOVES -------------------------------
 $40  Machining FEED lines
 $MODAL ON
-$IF GAT(8) = 1
-$GOTO 99
-$ENDIF
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + SQR(IX**2 + IY**2 + IZ**2)
 $IF MC = 1
 $LET TRC = 4004
 $ELSE
 $LET TRC = 0
 $ENDIF
-$IF IN = 1
-$LET INNC = 5000
-$ENDIF
 $IF OUT = 1
 $LET OUTNC = 5100
 $ENDIF
-$IF FF = 1 
-$LET KONTUR = KONTUR + 1
-$ENDIF
-$IF FF + TRCRAP = 34 
+$IF FF + TRCRAP = 34
 N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500
 N[N] G1 Z[AZ] F[FD/ 60.0]
-$ELSEIF FF + MITTE = 1101 
+$ELSEIF FF + MITTE = 1101
 N[N] G0 X[XAPO] Y[YAPO] F500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 N[N] G1 X[AX] Y[AY] F[F/ 60.0]
@@ -310,11 +230,8 @@ $ENDIF
 $IF TRC + IN + TRCRAP = 34
 N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $ELSEIF TRC + IN + FF = 4005
-$LET SCLN = SCLN + 1
 N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0]
 $ELSEIF FF + MOT = 11
-N[N] SSDE[KL_A]SD.USR.ToolAdjust.ToolCompMode = 1[KL_Z]
-N[N] %
 N[N] G1 Z[AZ] F[FD/ 60.0]
 N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0]
 $ELSEIF FF + MITTE = 1101
@@ -323,7 +240,6 @@ N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $ELSEIF OVL+MITTE+BAHNMITTE = 1
 N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $ELSEIF FFP+FF = 2
-$LET SCLN = SCLN + 1
 N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $ELSEIF TRC+OVL+OUTNC = 9105
 N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
@@ -336,54 +252,29 @@ $ELSEIF TRC+LFP+OUTNC = 9101
 N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $LET OUTCIR = 0
 $ELSEIF HIDE+FF+OVL+IN+OUTNC+MITTE+BAHNMITTE = 0
-$LET SCLN = SCLN + 1
 N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $ELSEIF HIDE+MITTE = 1100
-$LET SCLN = SCLN + 1
 N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $ELSEIF HIDE+MITTE+OFFEN = 4101
-$LET SCLN = SCLN + 1
 N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $ENDIF
 $IF HIDE = 1
 $LET HIDE = 0
 $ENDIF
-$GOTO 100
-$LL 99
-N[N] G1 X[GAX+X_VER] Y[GAY+Y_VER] Z[GAZ-SAEGE] F[FD/ 60.0]
-$LL 100
-$IF LF = 1
-$LET MESSZYKLUSEIN = PAT(1)
-$LET MESSPKT_X = PAT(2)
-$LET MESSPKT_Y = PAT(3)
-$ENDIF
-$LET INNC = 0
 $LET OUTNC = 0
 $MODAL OFF
 $----------------------------------------------------------------------------
 $50 Feed CW arc (APS will automatically limit arcs to 180 degrees maximum)
-$IF GAT(8) = 1
-$GOTO 99
-$ENDIF
-$IF IN + OUT + OVL + FULLG3 = 0
-$LET FULLG2 = FULLG2 + 1
-$ENDIF
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + (AIA*PI*R/180)
 $IF MC = 1
 $LET TRC = 4004
 $ELSE
 $LET TRC = 0
 $ENDIF
-$IF IN = 1
-$LET INNC = 5000
-$ENDIF
 $IF OUT = 1
 $LET OUTNC = 5100
 $ENDIF
-$IF FF = 1 
-$LET KONTUR = KONTUR + 1
-$ENDIF
-$IF FF + TRCRAP = 34 
+$IF FF + TRCRAP = 34
 N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + BAHNMITTE = 2101
@@ -417,12 +308,10 @@ $LET OUTCIR = 1
 $ELSEIF IN + FFP + MITTE + BAHNMITTE = 2
 N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[F/ 60.0]
 $ELSEIF FFP + MITTE + BAHNMITTE = 1
-$LET SCLN = SCLN + 1
 N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 $ELSEIF OVL + MITTE + BAHNMITTE = 1
 N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 $ELSEIF MITTE + BAHNMITTE = 0
-$LET SCLN = SCLN + 1
 N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 $ELSEIF MITTE + BAHNMITTE > 0
 N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
@@ -430,38 +319,19 @@ $ENDIF
 $IF HIDE = 1
 $LET HIDE = 0
 $ENDIF
-$IF LF = 1
-$LET MESSZYKLUSEIN = PAT(1)
-$LET MESSPKT_X = PAT(2)
-$LET MESSPKT_Y = PAT(3)
-$ENDIF
-$LL 99
-$LET INNC = 0
 $LET OUTNC = 0
 $----------------------------------------------------------------------------
-$60 Feed CCCW arc (APS will automatically limit arcs to 180 degrees maximum)
-$IF GAT(8) = 1
-$GOTO 99
-$ENDIF
-$IF IN + OUT + OVL + FULLG2 = 0
-$LET FULLG3 = FULLG3 + 1
-$ENDIF
+$60 Feed CCW arc (APS will automatically limit arcs to 180 degrees maximum)
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + (AIA*PI*R/180)
 $IF MC = 1
 $LET TRC = 4004
 $ELSE
 $LET TRC = 0
 $ENDIF
-$IF IN = 1
-$LET INNC = 5000
-$ENDIF
 $IF OUT = 1
 $LET OUTNC = 5100
 $ENDIF
-$IF FF = 1 
-$LET KONTUR = KONTUR + 1
-$ENDIF
-$IF FF + TRCRAP = 34 
+$IF FF + TRCRAP = 34
 N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + BAHNMITTE = 2101
@@ -495,12 +365,10 @@ $LET OUTCIR = 1
 $ELSEIF IN + FFP + MITTE + BAHNMITTE = 2
 N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[F/ 60.0]
 $ELSEIF FFP + MITTE + BAHNMITTE = 1
-$LET SCLN = SCLN + 1
 N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 $ELSEIF OVL + MITTE + BAHNMITTE = 1
 N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 $ELSEIF MITTE + BAHNMITTE = 0
-$LET SCLN = SCLN + 1
 N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 $ELSEIF MITTE + BAHNMITTE > 0
 N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
@@ -508,36 +376,12 @@ $ENDIF
 $IF HIDE = 1
 $LET HIDE = 0
 $ENDIF
-$IF LF = 1
-$LET MESSZYKLUSEIN = PAT(1)
-$LET MESSPKT_X = PAT(2)
-$LET MESSPKT_Y = PAT(3)
-$ENDIF
-$LL 99
-$LET INNC = 0
 $LET OUTNC = 0
 $------------------------ TOOL CHANGES --------------------------------------
 $70 Cancel current tool.  Use [T] for current tool number if required.
 $75 Code for CLOCKWISE spindle rotation - entered into variable RT
 $76 Code for COUNTER-CLOCKWISE spindle rotation - entered into variable RT
 $80 Select new tool.  Use [T] for new tool number, [S] for spindle speed.
-$LET SAEGE = TR
-$LET FIRST_RAPID = 1
-$88
-$IF GAT(8) = 1
-$ELSE
-$GOTO 99
-$ENDIF
-$LET WINKEL_S = 180-WAC
-$IF 180-WAC = 360
-$LET WINKEL_S = WINKEL_S-360
-$ELSEIF 180-WAC > 360
-$LET WINKEL_S = WINKEL_S-360
-$ENDIF
-$LET X_VER = (COS(WINKEL_S)*(0.15))
-$LET Y_VER = -(SIN(WINKEL_S)*(0.15))
-N[N] G0 V[KL_A][WINKEL_S]-#PERFANG![KL_Z] F3000
-$LL 99
 $-------------------------- SUBROUTINES -------------------------------------
 $90 CALL subroutine.  Use [SN] for subroutine number.
 N[N] %***** Call Subroutine (UP [SN]) *****
@@ -546,17 +390,11 @@ N[N] %*************************************
 N[N] %
 $----------------------------------------------------------------------------
 $100 BEGIN subroutine. Use [SN] for subroutine number.
-$LET CNT_SUB = CNT_SUB + 1
 N[N] %
 N[N] %***** Begin of Contour (UP [SN]) *****
 N[N] LPS UP[SN]
-[N] IF (SD.SysSRun.Active = 1) AND (#DRYRUN% = [SN]) THEN GOTO .PRENC[SN] ENDIF
-$LET DRYRUN = 0
 $----------------------------------------------------------------------------
 $110 END subroutine
-$LET DRYRUN = SN
-[N] #DRYRUN%=[SN]
-[N] .PRENC[SN]
 N[N] PEND
 N[N] %***************************************************
 $------------------- REFERENCE ZERO or ORIGIN SHIFT -------------------------
@@ -630,39 +468,27 @@ N[N] G1 Z[ZR] F[F/ 60.0]
 $----------------------------------------------------------------------------
 PECKING cycle - traverse to next hole at SAFE RAPID level [ZS]
 $220 First hole
-;220,1
 $221 Next holes
-;220,2
 $----------------------------------------------------------------------------
 PECKING cycle - traverse to next hole at RETRACT level [ZR]
 $224 First hole
-;224,1
 $225 Next holes
-;225,1
 $----------------------------------------------------------------------------
 TAPPING cycle - traverse to next hole at SAFE RAPID level [ZS]
 $230 First hole
-;230,1
 $231 Next holes
-;231,1
 $----------------------------------------------------------------------------
 TAPPING cycle -  traverse to next hole at RETRACT level [ZR]
 $234 First hole
-;234,1
 $235 Next holes
-;235,1
 $----------------------------------------------------------------------------
 BORING/REAMING/SPOT FACE etc - traverse to next hole at SAFE RAPID level [ZS]
 $240 First Hole
-;240,1
 $241 Next holes
-;241,1
 $----------------------------------------------------------------------------
 BORING/REAMING/SPOT FACE etc - traverse to next hole at RETRACT level [ZS]
 $244 First Hole
-;244,1
 $245 Next holes
-;245,1
 $-------------------------- GENERAL FORMATS ---------------------------------
 Separate modal values with spaces.  More than one letter is OK eg X VX VY
 $500 Modal Text  (Will not be repeated in following lines)
@@ -796,65 +622,24 @@ variable which is to have the same format as X Y (Z) moves. If a different
 format is required, put (Format, Lead figs, Trail figs) eg (6,0,0) = Integer.
 
 $1000 
-LOOP (3,0,0) "Schleifenzaehler"
-MESSZYKLUSEIN(6,0,0)
-MESSPKT_X()
-MESSPKT_Y()
-MESSLOOPEIN(6,0,0)
-COMP ("")
 COMP1 ("")
-TC_RAPID ("")
-FIRST_RAPID ( )
-KL_A ("1")
-KL_Z ("1")
-COUNT ()
-UP_NR ()
-ANZ_SubOp (6,0,0)
-ANZ_SubOpLin (6,0,0)
-ANZ_OP (6,0,0)
-CNT_SUB (6,0,0)
 STRECKE_NUTZEN ()
 NO_Z ( )
 SPEED ( )
 SPINDLE_ON (6,0,0)
 SHAPE_NR (6,0,0)
 SHAPE_OPEN (6,0,0)
-KONTUR ( )
-SCLN ( )
-SCLN2 ( )
-PRECISION () "FINISHING (0=Standard, 1=Medium, 2=High, 3=Best) <3>" (Required for engraving)
-SOLLHOEHE () "ENTER EXPECTED SHEET HEIGHT <0.442>" (Required for engraving)
-Z_DEPTH () "ENTER PROGRAMMED FINAL DEPTH FOR Z-AXIS <0>" (Required for engraving)
-PT_PT_DIS () "ENTER POINT TO POINT DISTANCE <300>" (Required for alignment)
-DIS_X ()
-DIS_Y ()
-SAEGE ()
-X_VER ()
-Y_VER ()
-WINKEL_S ()
-WAC_1 ()
 HIDE ()
-LINKS ()
-RECHTS ()
 MITTE ()
-INNEN ()
-AUSSEN ()
 BAHNMITTE ()
 OFFEN ()
-TRC () 
-PostOutputExtension ("") = "npg"
-IHOC_MODE () "Radius Comp.= 0 / Lenght Comp. (TopCut)= 1 <0>" (Required for tooladjust)
-EQUIDISTANT ("") = "0"
-' "Consider equidistant for TRC? (1=YES) <0>" (Required for alignment)
-DRYRUN()
-XAPO ()
-YAPO ()
+TRC ()
 TRCRAP()
 OUTNC()
-INNC()
 OUTCIR()
-FULLG2()
-FULLG3()
+XAPO ()
+YAPO ()
+PostOutputExtension ("") = "npg"
 $-------------------------- USER DEFINED CODE -------------------------------
 Prompts up to 50 chars max. Variable names up to 20 chars. Any $number in the
 range $1100 - $1119 can be used for each definition. First line after $number
@@ -864,13 +649,4 @@ $-------------------------- Post End ----------------------------------------
 $1200
 $-------------------------- MAKRO-ATTRIBUTE
 $3000
-
-1 = LicomDECHMessZyklus
-2 = LicomDECHMessPunkt_X
-3 = LicomDECHMessPunkt_Y
-4 = LicomDECH_NumberSubOps
-5 = LicomDECH_NumberSubOpsLinear
-6 = LicomDECH_NumberOps
-7 = LicomDEMMMicroperforation
-8 = LicomDEMMMicropGA
 $ ---------------------- End of Post
