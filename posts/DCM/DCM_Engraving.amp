@@ -1,4 +1,5 @@
 $--POSTPROCESSOR https://hansmill.ru  DCM engraving machine, controller HCFA HCQ9P-1700
+$--CHANGES: 2026-10-15 V1_21 CODESYS SMC_NCInterpreter (DIN 66025): comments in ( ), G0 speed FF500, G40/G41/G42 with D[TR] in own block, G/F/Z always output
 $--CHANGES: 2026-10-15 V1_20 No subroutines and no TRS origin shift: code output in full
 $--CHANGES: 2026-10-15 V1_19 Separators and template text removed, comments translated to English
 $--CHANGES: 2026-10-15 V1_18 M978 (vacuum OFF) removed at program end
@@ -32,40 +33,34 @@ $LET TRCRAP = 0
 $LET OUTNC = 0
 $LET OUTCIR = 0
 $12 Main Program LEADING lines
-N[N] %****************************************************
-N[N] %** https://hansmill.ru                            **
-N[N] %** DCM High Speed Engraving Machine               **
-N[N] %** NC-Program created on: [DAT]       **
-N[N] %****************************************************
-N[N] %
-N[N] %***** Presettings *********************************
-N[N] %
+N[N] (****************************************************)
+N[N] (** https://hansmill.ru                            **)
+N[N] (** DCM High Speed Engraving Machine               **)
+N[N] (** NC-Program created on: [DAT]       **)
+N[N] (****************************************************)
+N[N] (***** Presettings *********************************)
 N[N] G17
-N[N] G90 F50
+N[N] G90
 N[N] G53
-N[N] G0 Z53 F500
-N[N] %*********************************************************
-N[N] M988 % Ext. Chip Suction Unit ON
-N[N] M991 % Shutter Milling Spindle OPEN
-N[N] M979 % Control Vacuum ON
-N[N] M996 % Tool Cover DOWN
-N[N] %***************************************************
+N[N] G0 Z53 FF500
+N[N] (*********************************************************)
+N[N] M988 (Ext. Chip Suction Unit ON)
+N[N] M991 (Shutter Milling Spindle OPEN)
+N[N] M979 (Control Vacuum ON)
+N[N] M996 (Tool Cover DOWN)
+N[N] (***************************************************)
 $15 Main Program TRAILING lines
 $IF SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] END
+N[N] (SHAPE [SHAPE_NR] END)
 $LET SHAPE_OPEN = 0
 $ENDIF
-N[N] %
-N[N] %***** Postsettings ********************************
-N[N] %
+N[N] (***** Postsettings ********************************)
 N[N] G53
-N[N] G0 Z53 F500
-N[N] % X785 Y600
-N[N] M987  % Ext. chip suction unit OFF
-N[N] M992  % Shutter milling spindle CLOSE
-N[N] %
-N[N] %***** END OF PROGRAM ******************************
-N[N] %
+N[N] G0 Z53 FF500
+N[N] (X785 Y600)
+N[N] M987 (Ext. chip suction unit OFF)
+N[N] M992 (Shutter milling spindle CLOSE)
+N[N] (***** END OF PROGRAM ******************************)
 N[N] M30
 $17 File TRAILING Lines
 $20 Rapid Move in XY (MILL/ROUTER/FLAME/LASER) or XZ (LATHE) only
@@ -106,7 +101,7 @@ $ENDIF
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] BEGIN
+N[N] (SHAPE [SHAPE_NR] BEGIN)
 $ENDIF
 $LET XAPO=AX
 $LET YAPO=AY
@@ -114,32 +109,33 @@ $21 3D Rapid Move in XYZ (MILL/ROUTER ONLY)
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] BEGIN
+N[N] (SHAPE [SHAPE_NR] BEGIN)
 $ENDIF
 $LET XAPO=AX
 $LET YAPO=AY
-N[N] G0 X[AX] Y[AY] Z[AZ] F500
+N[N] G0 X[AX] Y[AY] Z[AZ] FF500
 $25 Rapid Move in Z only (MILL etc)
 $IF NO_Z = 1
 $LET NO_Z = 0
 $ELSEIF NO_Z = 0
-N[N] G0 Z[AZ] F500
+N[N] G0 Z[AZ] FF500
 $LET HIDE = 1
 $IF TRCRAP + FRA = 34
-N[N] G1 [TC] X[AX] Y[AY] F[FC/ 60.0]
+N[N] [TC] D[TR]
+N[N] G1 X[AX] Y[AY] F[FC/ 60.0]
 $ELSEIF TRC+FRA+OUTNC+OUTCIR = 9106
-N[N] G1 [TC] X[AX] Y[AY] F[FC/ 60.0]
+N[N] [TC] D[TR]
+N[N] G1 X[AX] Y[AY] F[FC/ 60.0]
 $ELSEIF TRC+FRA+OUTNC+OUTCIR = 4005
-N[N] [TC]
+N[N] [TC] D[TR]
 N[N] G1 X[AX] Y[AY] F[FC/ 60.0]
 $ENDIF
 $ENDIF
 $IF FRA = 1
-N[N] %PATH [STRECKE_NUTZEN] MM
+N[N] (PATH [STRECKE_NUTZEN] MM)
 $ENDIF
 $IF FRA + SHAPE_OPEN = 2
-N[N] G0 F500
-N[N] %SHAPE [SHAPE_NR] END
+N[N] (SHAPE [SHAPE_NR] END)
 $LET SHAPE_OPEN = 0
 $ENDIF
 $LET OUTNC = 0
@@ -158,22 +154,24 @@ $IF OUT = 1
 $LET OUTNC = 5100
 $ENDIF
 $IF FF + TRCRAP = 34
-N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500
+N[N] [COMP1] D[TR]
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + MITTE = 1101
-N[N] G0 X[XAPO] Y[YAPO] F500
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 N[N] G1 X[AX] Y[AY] F[F/ 60.0]
 $ELSEIF FF + TRCRAP + TRC + IN = 4005
-N[N] G0 [TC] X[XAPO] Y[YAPO] F500
+N[N] [TC] D[TR]
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + TRC = 4005
-N[N] G0 X[XAPO] Y[YAPO] F500
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
-N[N] [TC]
+N[N] [TC] D[TR]
 N[N] G1 X[AX] Y[AY] F[F/ 60.0]
 $ELSEIF FF + TRCRAP + TRC = 1
-N[N] G0 X[XAPO] Y[YAPO] F500
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ENDIF
 $IF TRC + IN + TRCRAP = 34
@@ -194,7 +192,7 @@ $ELSEIF TRC+OVL+OUTNC = 9105
 N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $LET OUTCIR = 0
 $ELSEIF TRC+OUTNC = 9104
-N[N] [TC]
+N[N] [TC] D[TR]
 N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $LET OUTCIR = 0
 $ELSEIF TRC+LFP+OUTNC = 9101
@@ -223,13 +221,17 @@ $IF OUT = 1
 $LET OUTNC = 5100
 $ENDIF
 $IF FF + TRCRAP = 34
-N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500
+N[N] [COMP1] D[TR]
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + BAHNMITTE = 2101
-N[N] G0 X[XAPO] Y[YAPO] F500
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + TRCRAP = 1
-N[N] G0 [TC] X[XAPO] Y[YAPO] F500
+$IF TRC = 4004
+N[N] [TC] D[TR]
+$ENDIF
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ENDIF
 $IF TRC + TRCRAP + IN = 34
@@ -279,13 +281,17 @@ $IF OUT = 1
 $LET OUTNC = 5100
 $ENDIF
 $IF FF + TRCRAP = 34
-N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500
+N[N] [COMP1] D[TR]
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + BAHNMITTE = 2101
-N[N] G0 X[XAPO] Y[YAPO] F500
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + TRCRAP = 1
-N[N] G0 [TC] X[XAPO] Y[YAPO] F500
+$IF TRC = 4004
+N[N] [TC] D[TR]
+$ENDIF
+N[N] G0 X[XAPO] Y[YAPO] FF500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ENDIF
 $IF TRC + TRCRAP + IN = 34
@@ -350,74 +356,74 @@ $151 Code to apply MIST Coolant
 $152 Code to apply FLOOD Coolant
 $153 Code to apply THROUGH TOOL Coolant
 $200 CANCEL drill/tapping cycle
-N[N] G0 Z[ZS] F500
+N[N] G0 Z[ZS] FF500
 $IF SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] END
+N[N] (SHAPE [SHAPE_NR] END)
 $LET SHAPE_OPEN = 0
 $ENDIF
 $205 First Hole in SUBROUTINE. NOTE $205/206 apply to ALL drill/peck etc cycles
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] BEGIN
+N[N] (SHAPE [SHAPE_NR] BEGIN)
 $ENDIF
-N[N] G0 Z[ZS] F500
-N[N] G0 X[AX] Y[AY] F500
-N[N] G0 Z[ZR] F500
+N[N] G0 Z[ZS] FF500
+N[N] G0 X[AX] Y[AY] FF500
+N[N] G0 Z[ZR] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $206 Next holes in Subroutine
-N[N] G0 Z[ZR] F500
+N[N] G0 Z[ZR] FF500
 $IF SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] END
+N[N] (SHAPE [SHAPE_NR] END)
 $LET SHAPE_OPEN = 0
 $ENDIF
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] BEGIN
-N[N] G0 X[AX] Y[AY] F500
+N[N] (SHAPE [SHAPE_NR] BEGIN)
+N[N] G0 X[AX] Y[AY] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $210 First Hole
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] BEGIN
+N[N] (SHAPE [SHAPE_NR] BEGIN)
 $ENDIF
-N[N] G0 Z[ZS] F500
-N[N] G0 X[AX] Y[AY] F500
-N[N] G0 Z[ZR] F500
+N[N] G0 Z[ZS] FF500
+N[N] G0 X[AX] Y[AY] FF500
+N[N] G0 Z[ZR] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $211 Next holes
-N[N] G0 Z[ZS] F500
+N[N] G0 Z[ZS] FF500
 $IF SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] END
+N[N] (SHAPE [SHAPE_NR] END)
 $LET SHAPE_OPEN = 0
 $ENDIF
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] BEGIN
-N[N] G0 X[AX] Y[AY] F500
-N[N] G0 Z[ZR] F500
+N[N] (SHAPE [SHAPE_NR] BEGIN)
+N[N] G0 X[AX] Y[AY] FF500
+N[N] G0 Z[ZR] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $214 First Hole
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] BEGIN
+N[N] (SHAPE [SHAPE_NR] BEGIN)
 $ENDIF
-N[N] G0 Z[ZS] F500
-N[N] G0 X[AX] Y[AY] F500
-N[N] G0 Z[ZR] F500
+N[N] G0 Z[ZS] FF500
+N[N] G0 X[AX] Y[AY] FF500
+N[N] G0 Z[ZR] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $215 Next holes
-N[N] G0 Z[ZR] F500
+N[N] G0 Z[ZR] FF500
 $IF SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] END
+N[N] (SHAPE [SHAPE_NR] END)
 $LET SHAPE_OPEN = 0
 $ENDIF
 $LET SHAPE_NR = SHAPE_NR + 1
 $LET SHAPE_OPEN = 1
-N[N] %SHAPE [SHAPE_NR] BEGIN
-N[N] G0 X[AX] Y[AY] F500
+N[N] (SHAPE [SHAPE_NR] BEGIN)
+N[N] G0 X[AX] Y[AY] FF500
 N[N] G1 Z[ZB] F[F/ 60.0]
 $220 First hole
 $221 Next holes
@@ -432,10 +438,10 @@ $241 Next holes
 $244 First Hole
 $245 Next holes
 $500 Modal Text  (Will not be repeated in following lines)
-G0 G1 G2 G3 D1 FFW(0) FFW(1) ED1
+
 
 $502 Modal ABSOLUTE Values (Will not be repeated if the VALUE is the same)
-Z F 
+
 $504 Modal INCREMENTAL Values (Will not be put into NC code if VALUE is ZERO)
 
 $510 X Y Z I J K values must have + as well as - signs (1 = yes, 0 = no)
