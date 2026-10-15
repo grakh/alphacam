@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-06 V1_3 (Konturmarken %SHAPE n BEGIN / END)
 $--ÄNDERUNGEN: 2026-10-06 V1_2 (M3 nur einmal am Programmanfang)
 $--ÄNDERUNGEN: 2025-12-05 V1_1
 $------------------------- PROGRAM LEADING/TRAILING LINES -------------------
@@ -23,6 +24,8 @@ $LET STRECKE_NUTZEN = 0
 $LET NO_Z = 1
 $LET SPEED = 0
 $LET SPINDLE_ON = 0 ''M3 bereits ausgegeben? (0=Nein, 1=Ja)
+$LET SHAPE_NR = 0 ''Konturzaehler fuer %SHAPE-Marken
+$LET SHAPE_OPEN = 0 ''Kontur geoeffnet? (0=Nein, 1=Ja)
 $LET KONTUR = 0
 $LET SCLN = 0
 $LET SCLN2 = 0
@@ -139,6 +142,11 @@ N[N] %***************************************************
 '';;$ENDIF
 $----------------------- Main Program TRAILING lines ----------------------------------------
 $15 Main Program TRAILING lines
+'' Noch offene Kontur schliessen (V1_3)
+$IF SHAPE_OPEN = 1
+%SHAPE [SHAPE_NR] END
+$LET SHAPE_OPEN = 0
+$ENDIF
 N[N] %
 N[N] %***** Postsettings ********************************
 N[N] %
@@ -266,6 +274,13 @@ N[N] M3 K[SPEED] % new
 $LET SPINDLE_ON = 1
 $ENDIF
 ''
+'' Kontur-Anfangsmarke (V1_3). Alles bis %SHAPE n END gehoert zur Kontur
+$IF SHAPE_OPEN = 0
+$LET SHAPE_NR = SHAPE_NR + 1
+$LET SHAPE_OPEN = 1
+%SHAPE [SHAPE_NR] BEGIN
+$ENDIF
+''
 $LET XAPO=AX
 $LET YAPO=AY
 ''
@@ -276,6 +291,12 @@ $ENDIF
 ''
 $----------------------- RAPID MOVE in XYZ ----------------------------------
 $21 3D Rapid Move in XYZ (MILL/ROUTER ONLY)
+'' Kontur-Anfangsmarke (V1_3)
+$IF SHAPE_OPEN = 0
+$LET SHAPE_NR = SHAPE_NR + 1
+$LET SHAPE_OPEN = 1
+%SHAPE [SHAPE_NR] BEGIN
+$ENDIF
 $IF GAT(8) = 1
 N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] Z[GAZ-SAEGE] ;21,1
 $ELSE
@@ -365,6 +386,13 @@ N[N] %
 '';;N[N] ;
 $ENDIF
 ''
+'' Modalzustand fuer naechste Kontur einheitlich setzen + Kontur-Endmarke (V1_3)
+$IF FRA + SHAPE_OPEN = 2
+N[N] G0 F50 % reset modal
+%SHAPE [SHAPE_NR] END
+$LET SHAPE_OPEN = 0
+$ENDIF
+''
 $IF MESSZYKLUSEIN + FRA = 2
 $LET MESSZYKLUSEIN  = 0
 $LET MESSLOOPEIN = 1
@@ -391,6 +419,12 @@ $LET NO_Z = 0
 $ELSEIF NO_Z = 0
 N[N] G0 Z[GAZ-SAEGE] ;25,8
 N[N] ;
+$ENDIF
+''
+'' Kontur-Endmarke MicroPerf (V1_3)
+$IF FRA + SHAPE_OPEN = 2
+%SHAPE [SHAPE_NR] END
+$LET SHAPE_OPEN = 0
 $ENDIF
 ''
 $LET INNC = 0
@@ -1143,6 +1177,8 @@ STRECKE_NUTZEN ()
 NO_Z ( )
 SPEED ( )
 SPINDLE_ON (6,0,0)
+SHAPE_NR (6,0,0)
+SHAPE_OPEN (6,0,0)
 KONTUR ( )
 SCLN ( )
 SCLN2 ( )
