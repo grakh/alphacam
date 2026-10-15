@@ -1,4 +1,5 @@
 $--POSTPROZESSOR https://hansmill.ru
+$--ÄNDERUNGEN: 2026-10-06 V1_8 (Debug-Kommentare am Zeilenende entfernt)
 $--ÄNDERUNGEN: 2026-10-06 V1_7 (G2/G3 in $50/$60 korrigiert, OUTCIR 50,16, $ENDIF in $100, Kommentar $210)
 $--ÄNDERUNGEN: 2026-10-06 V1_6 (M988/M991/M979/M996 am Anfang, M987/M992/M978 am Ende aktiv)
 $--ÄNDERUNGEN: 2026-10-06 V1_5 (G0 mit F500 = 500 mm/s)
@@ -101,8 +102,8 @@ $LET EQUIDISTANT=[EQUIDISTANT]
 '';;$ENDIF
 '';;N[N] ;
 '';;N[N] G8 G17 G90 G47 JKC(1) FFW(1) PMS(1) ED1 F30000 ñòàðàÿ
-N[N] G17 % new
-N[N] G90 F50 % new
+N[N] G17
+N[N] G90 F50
 '';;$IF GAT(8) = 0
 '';;N[N] CLN(1)
 '';;N[N] CLN(CollErr0)
@@ -111,8 +112,8 @@ N[N] G90 F50 % new
 '';;$ENDIF
 '';;N[N] ;
 '';;N[N] G53 G153 G0 Z53 old
-N[N] G53 % new
-N[N] G0 Z53 F500 % new
+N[N] G53
+N[N] G0 Z53 F500
 '';;N[N] ATR()
 '';;N[N] G154.1 G154.2
 '';;$IF GAT(8) = 1
@@ -158,8 +159,8 @@ N[N] %
 '';;[N] .PRGEND
 '';;N[N] COR() ATR() TRS()
 '';;N[N] G153 G53 G0 Z53 % old
-N[N] G53 % new
-N[N] G0 Z53 F500 % new
+N[N] G53
+N[N] G0 Z53 F500
 N[N] % X785 Y600
 '';;$IF GAT(8) = 1
 '';;N[N] P PERF(UP=1)
@@ -274,7 +275,7 @@ $ENDIF
 '' M3 nur einmal am Programmanfang ausgeben (V1_2)
 $IF GAT(8) + SPINDLE_ON = 0
 '';;N[N] M3 S[SPEED] %20,1 old
-N[N] M3 K[SPEED] % new
+N[N] M3 K[SPEED]
 $LET SPINDLE_ON = 1
 $ENDIF
 ''
@@ -299,8 +300,8 @@ $LET XAPO=AX
 $LET YAPO=AY
 ''
 $IF GAT(8) = 1
-N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] F500 ;20,9
-N[N] G0 Z[GAZ-SAEGE] F500 ;20,10
+N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] F500
+N[N] G0 Z[GAZ-SAEGE] F500
 $ENDIF
 ''
 $----------------------- RAPID MOVE in XYZ ----------------------------------
@@ -322,9 +323,9 @@ $ENDIF
 %SHAPE [SHAPE_NR] BEGIN
 $ENDIF
 $IF GAT(8) = 1
-N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] Z[GAZ-SAEGE] F500 ;21,1
+N[N] G0 X[GAX+X_VER] Y[GAY+Y_VER] Z[GAZ-SAEGE] F500
 $ELSE
-N[N] G0 X[AX] Y[AY] Z[AZ] F500 ;21,2
+N[N] G0 X[AX] Y[AY] Z[AZ] F500
 $ENDIF
 $----------------------- RAPID MOVE in Z ------------------------------------
 $----------------------------------------------------------------------------
@@ -373,7 +374,7 @@ $ENDIF
 $IF NO_Z = 1
 $LET NO_Z = 0
 $ELSEIF NO_Z = 0
-N[N] G0 Z[AZ] F500 %25,2
+N[N] G0 Z[AZ] F500
 ''L_R=[L_R] I_O=[I_O] MITTE=[MITTE] BAHNMITTE=[BAHNMITTE] HIDE=[HIDE]
 ''FFP=[FFP] LFP=[LFP] FRA=[FRA] LRB=[LRB] FF=[FF] LF=[LF] IN=[IN] OUT=[OUT]
 ''MC=[MC] TRC=[TRC] TRCRAP=[TRCRAP] INNC=[INNC] OUTNC=[OUTNC] OUTCIR=[OUTCIR] OVL=[OVL]
@@ -381,15 +382,15 @@ N[N] G0 Z[AZ] F500 %25,2
 $LET HIDE = 1
 ''
 $IF TRCRAP + FRA = 34
-N[N] G1 [TC] X[AX] Y[AY] F[FC/ 60.0] %SCLN(1) ;25,3
+N[N] G1 [TC] X[AX] Y[AY] F[FC/ 60.0]
 ''
 $ELSEIF TRC+FRA+OUTNC+OUTCIR = 9106
-N[N] G1 [TC] X[AX] Y[AY] F[FC/ 60.0] %SCLN(1) ;25,4 
+N[N] G1 [TC] X[AX] Y[AY] F[FC/ 60.0]
 ''
 $ELSEIF TRC+FRA+OUTNC+OUTCIR = 4005
 '';;N[N] G1 [TC] X[AX] Y[AY] F[FC/ 60.0] %SCLN(1) %25,5 old
-N[N] [TC] %25,5 new
-N[N] G1 X[AX] Y[AY] F[FC/ 60.0] % new
+N[N] [TC]
+N[N] G1 X[AX] Y[AY] F[FC/ 60.0]
 ''
 $ENDIF
 ''N[N] ;
@@ -412,7 +413,7 @@ $ENDIF
 ''
 '' Modalzustand fuer naechste Kontur einheitlich setzen + Kontur-Endmarke (V1_3)
 $IF FRA + SHAPE_OPEN = 2
-N[N] G0 F500 % reset modal
+N[N] G0 F500
 %SHAPE [SHAPE_NR] END
 $LET SHAPE_OPEN = 0
 $ENDIF
@@ -422,8 +423,8 @@ $LET MESSZYKLUSEIN  = 0
 $LET MESSLOOPEIN = 1
 ''
 N[N] ;***** Altitude measurement and compensation MP([LOOP]) *****
-[N] #MPX!=[MESSPKT_X] : #MPY!=[MESSPKT_Y]  
-N[N] P IHOC(PD=0) ;25,8
+[N] #MPX!=[MESSPKT_X] : #MPY!=[MESSPKT_Y]
+N[N] P IHOC(PD=0)
 [N] IF (#IHOC? = TRUE) AND (#IHOCPL? = TRUE) THEN GOTO .SHAPE[LOOP] ENDIF
 N493 ;
 N[N] ;*********************************************************
@@ -435,13 +436,13 @@ $ENDIF
 $GOTO 100
 ''
 $LL 99
-N[N] ATR(Z[KL_A]ZOFFMP![KL_Z]) ;25,7
+N[N] ATR(Z[KL_A]ZOFFMP![KL_Z])
 N[N] ED01
 '' Keine Z Achse auf Sicherheitshoehe bei Programmstart
 $IF NO_Z = 1
 $LET NO_Z = 0
 $ELSEIF NO_Z = 0
-N[N] G0 Z[GAZ-SAEGE] F500 ;25,8
+N[N] G0 Z[GAZ-SAEGE] F500
 N[N] ;
 $ENDIF
 ''
@@ -495,23 +496,23 @@ $LET KONTUR = KONTUR + 1
 '';;N[N] PREPART 
 $ENDIF
 $IF FF + TRCRAP = 34 
-N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500 %SCLN(2) ;40,3
-N[N] G1 Z[AZ] F[FD/ 60.0] ;40,4
+N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500
+N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + MITTE = 1101 
-N[N] G0 X[XAPO] Y[YAPO] F500 ;40,5
-N[N] G1 Z[AZ] F[FD/ 60.0] 
-N[N] G1 X[AX] Y[AY] F[F/ 60.0] ;40,6
+N[N] G0 X[XAPO] Y[YAPO] F500
+N[N] G1 Z[AZ] F[FD/ 60.0]
+N[N] G1 X[AX] Y[AY] F[F/ 60.0]
 $ELSEIF FF + TRCRAP + TRC + IN = 4005
-N[N] G0 [TC] X[XAPO] Y[YAPO] F500 %SCLN(2) ;40,7
-N[N] G1 Z[AZ] F[FD/ 60.0] ;40,68
+N[N] G0 [TC] X[XAPO] Y[YAPO] F500
+N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + TRC = 4005
-N[N] G0 X[XAPO] Y[YAPO] F500 %40,9
-N[N] G1 Z[AZ] F[FD/ 60.0] 
+N[N] G0 X[XAPO] Y[YAPO] F500
+N[N] G1 Z[AZ] F[FD/ 60.0]
 '';;N[N] G1 [TC] X[AX] Y[AY] F[F/ 60.0] %SCLN(2) % old
-N[N] [TC] % new
-N[N] G1 X[AX] Y[AY] F[F/ 60.0] % new
+N[N] [TC]
+N[N] G1 X[AX] Y[AY] F[F/ 60.0]
 $ELSEIF FF + TRCRAP + TRC = 1
-N[N] G0 X[XAPO] Y[YAPO] F500 ;40,10
+N[N] G0 X[XAPO] Y[YAPO] F500
 N[N] G1 Z[AZ] F[FD/ 60.0]
 $ENDIF
 ''
@@ -520,56 +521,56 @@ $ENDIF
 ''MC=[MC] TRC=[TRC] TRCRAP=[TRCRAP]
 ''
 $IF TRC + IN + TRCRAP = 34
-N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0] %SCLN(2) ;40,11
+N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 ''
 $ELSEIF TRC + IN + FF = 4005
 $LET SCLN = SCLN + 1
-N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0] ;40.12 N[SCLN] 
+N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0]
 ''
 $ELSEIF FF + MOT = 11
 N[N] SSDE[KL_A]SD.USR.ToolAdjust.ToolCompMode = 1[KL_Z]
 N[N] ;
-N[N] G1 Z[AZ] F[FD/ 60.0] 
-N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0] %SCLN(2) ;40.13
+N[N] G1 Z[AZ] F[FD/ 60.0]
+N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0]
 ''
 $ELSEIF FF + MITTE = 1101
 ''N[N] G1 Z[AZ] F[FD/ 60.0] ;40.12
 ''
 $ELSEIF IN + FFP = 2
-N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0] %SCLN(2) ;40,14
+N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 ''
 $ELSEIF OVL+MITTE+BAHNMITTE = 1
-N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0] %SCLN(1) ;40,15
+N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 ''
 $ELSEIF FFP+FF = 2
 $LET SCLN = SCLN + 1
-N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0] ;40,16 N[SCLN] 
+N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 ''
 $ELSEIF TRC+OVL+OUTNC = 9105
-N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0] %SCLN(1) ;40,17  
+N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $LET OUTCIR = 0
 ''
 $ELSEIF TRC+OUTNC = 9104
 '';;N[N] G1 [TC] X[AX] Y[AY] Z[AZ] F[FC/ 60.0] %SCLN(1) %40,18 old
-N[N] [TC] %40,18 new
-N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0] % new
+N[N] [TC]
+N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $LET OUTCIR = 0
 ''
 $ELSEIF TRC+LFP+OUTNC = 9101
-N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0] %SCLN(1) ;40,19 
+N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $LET OUTCIR = 0
 ''
 $ELSEIF HIDE+FF+OVL+IN+OUTNC+MITTE+BAHNMITTE = 0
 $LET SCLN = SCLN + 1
-N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0] %40,20 N[SCLN] 
+N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 ''
 $ELSEIF HIDE+MITTE = 1100
 $LET SCLN = SCLN + 1
-N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0] ;40,21 N[SCLN]
+N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 ''
 $ELSEIF HIDE+MITTE+OFFEN = 4101
 $LET SCLN = SCLN + 1
-N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0] ;40,22 N[SCLN]
+N[N] G1 X[AX] Y[AY] Z[AZ] F[FC/ 60.0]
 $ENDIF
 ''
 $IF HIDE = 1
@@ -578,7 +579,7 @@ $ENDIF
 ''
 $GOTO 100
 $LL 99
-N[N] G1 X[GAX+X_VER] Y[GAY+Y_VER] Z[GAZ-SAEGE] F[FD/ 60.0] ;40,23
+N[N] G1 X[GAX+X_VER] Y[GAY+Y_VER] Z[GAZ-SAEGE] F[FD/ 60.0]
 $LL 100
 ''
 $IF LF = 1
@@ -630,62 +631,62 @@ $LET KONTUR = KONTUR + 1
 '';;N[N] PREPART 
 $ENDIF
 $IF FF + TRCRAP = 34 
-N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500 %SCLN(2) ;50,3
-N[N] G1 Z[AZ] F[FD/ 60.0] ;50,4
+N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500
+N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + BAHNMITTE = 2
-N[N] G0 X[XAPO] Y[YAPO] F500 ;50,5
-N[N] G1 Z[AZ] F[FD/ 60.0] ;50,6
+N[N] G0 X[XAPO] Y[YAPO] F500
+N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + TRCRAP = 1
-N[N] G0 [TC] X[XAPO] Y[YAPO] F500 %SCLN(2) ;50,7
-N[N] G1 Z[AZ] F[FD/ 60.0] ;50,8
+N[N] G0 [TC] X[XAPO] Y[YAPO] F500
+N[N] G1 Z[AZ] F[FD/ 60.0]
 $ENDIF
 ''
 $IF TRC + TRCRAP + IN = 34
-N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(2) ;50,9 G12
+N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0]
 ''
 $ELSEIF TRC + TRCRAP + IN + FF = 4005
-N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(2) ;50,10 new G12
+N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0]
 ''
 $ELSEIF TRC + IN + MITTE + BAHNMITTE = 4005
-N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(2) ;50,11 G12
+N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0]
 ''
 $ELSEIF FF + MOT = 11
-N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0] ;50,12
+N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0]
 ''
 $ELSEIF FF + MITTE = 1101
-N[N] G2 X[AX] Y[AY] R[R] F[F/ 60.0] ;50,13
+N[N] G2 X[AX] Y[AY] R[R] F[F/ 60.0]
 ''
 $ELSEIF TRC + FF + MITTE = 1
-N[N] G2 X[AX] Y[AY] R[R] F[F/ 60.0] ;50,14
+N[N] G2 X[AX] Y[AY] R[R] F[F/ 60.0]
 ''
 $ELSEIF TRC + OUTNC + MITTE + BAHNMITTE = 9104
-N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(1) ;50,15 new G13
+N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0]
 $LET OUTCIR = 1
 ''
 $ELSEIF TRC + OUTNC + TRCRAP = 9104
-N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(1) ;50,16 G13
+N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0]
 $LET OUTCIR = 1
 ''
 $ELSEIF TRC + OUTNC + TRCRAP = 5133
-N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(1) ;50,17 G13
+N[N] G2 X[AX] Y[AY] R[R] F[FC/ 60.0]
 $LET OUTCIR = 1
 ''
 $ELSEIF IN + FFP + MITTE + BAHNMITTE = 2
-N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[F/ 60.0] %SCLN(2) ;50,18 
+N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[F/ 60.0]
 ''
 $ELSEIF FFP + MITTE + BAHNMITTE = 1
 $LET SCLN = SCLN + 1
-N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0] %50,19 N[SCLN]  
+N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 ''
 $ELSEIF OVL + MITTE + BAHNMITTE = 1
-N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0] %SCLN(1) ;50,20 
+N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 ''
 $ELSEIF MITTE + BAHNMITTE = 0
 $LET SCLN = SCLN + 1
-N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0] %50,21 N[SCLN]  
+N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 ''
 $ELSEIF MITTE + BAHNMITTE > 0
-N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0] ;50,22 
+N[N] G2 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 $ENDIF
 ''
 $IF HIDE = 1
@@ -742,62 +743,62 @@ $LET KONTUR = KONTUR + 1
 '';;N[N] PREPART 
 $ENDIF
 $IF FF + TRCRAP = 34 
-N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500 %SCLN(2) ;60,3
-N[N] G1 Z[AZ] F[FD/ 60.0] ;60,4
+N[N] G0 [COMP1] X[XAPO] Y[YAPO] F500
+N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + BAHNMITTE = 2
-N[N] G0 X[XAPO] Y[YAPO] F500 ;60,5
-N[N] G1 Z[AZ] F[FD/ 60.0] ;60,6
+N[N] G0 X[XAPO] Y[YAPO] F500
+N[N] G1 Z[AZ] F[FD/ 60.0]
 $ELSEIF FF + TRCRAP = 1
-N[N] G0 [TC] X[XAPO] Y[YAPO] F500 %SCLN(2) ;60,7
-N[N] G1 Z[AZ] F[FD/ 60.0] ;60,8
+N[N] G0 [TC] X[XAPO] Y[YAPO] F500
+N[N] G1 Z[AZ] F[FD/ 60.0]
 $ENDIF
 ''
 $IF TRC + TRCRAP + IN = 34
-N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(2) ;60,9 G12
+N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0]
 ''
 $ELSEIF TRC + TRCRAP + IN + FF = 4005
-N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(2) ;60,10 G12
+N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0]
 ''
 $ELSEIF TRC + IN + MITTE + BAHNMITTE = 4005
-N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(2) ;60,11 G12
+N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0]
 ''
 $ELSEIF FF + MOT = 11
-N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0] %SCLN(2) ;60,12
+N[N] G1 X[AX] Y[AY] Z[AZ] F[F/ 60.0]
 ''
 $ELSEIF FF + MITTE = 1101
-N[N] G3 X[AX] Y[AY] R[R] F[F/ 60.0] ;60,13
+N[N] G3 X[AX] Y[AY] R[R] F[F/ 60.0]
 ''
 $ELSEIF TRC + FF + MITTE = 1
-N[N] G3 X[AX] Y[AY] R[R] F[F/ 60.0] ;60,14
+N[N] G3 X[AX] Y[AY] R[R] F[F/ 60.0]
 ''
 $ELSEIF TRC + OUTNC + MITTE + BAHNMITTE = 9104
-N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(1) ;60,15 new G13
+N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0]
 $LET OUTCIR = 1
 ''
 $ELSEIF TRC + OUTNC + TRCRAP = 9104
-N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(1) ;60,16 G13
+N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0]
 $LET OUTCIR = 1
 ''
 $ELSEIF TRC + OUTNC + TRCRAP = 5133
-N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0] %SCLN(1) ;60,17 G13
+N[N] G3 X[AX] Y[AY] R[R] F[FC/ 60.0]
 $LET OUTCIR = 1
 ''
 $ELSEIF IN + FFP + MITTE + BAHNMITTE = 2
-N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[F/ 60.0] %SCLN(2) ;60,18
+N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[F/ 60.0]
 ''
 $ELSEIF FFP + MITTE + BAHNMITTE = 1
 $LET SCLN = SCLN + 1
-N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0] %60,19 N[SCLN]  
+N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 ''
 $ELSEIF OVL + MITTE + BAHNMITTE = 1
-N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0] %SCLN(1) ;60,20
+N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 ''
 $ELSEIF MITTE + BAHNMITTE = 0
 $LET SCLN = SCLN + 1
-N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0] %60,21 N[SCLN]  
+N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 ''
 $ELSEIF MITTE + BAHNMITTE > 0
-N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0] ;60,22 
+N[N] G3 X[AX] Y[AY] Z[AZ] R[R] F[FC/ 60.0]
 $ENDIF
 ''
 $IF HIDE = 1
@@ -886,14 +887,14 @@ $ENDIF
 $LET X_VER = (COS(WINKEL_S)*(0.15))
 $LET Y_VER = -(SIN(WINKEL_S)*(0.15))
 ''
-N[N] G0 V[KL_A][WINKEL_S]-#PERFANG![KL_Z] F3000;88,1
+N[N] G0 V[KL_A][WINKEL_S]-#PERFANG![KL_Z] F3000
 ''N[N] G0 V[WINKEL_S] F3000;88,1
 ''
 $LL 99
 $-------------------------- SUBROUTINES -------------------------------------
 $90 CALL subroutine.  Use [SN] for subroutine number.
-N[N] ;***** Call Subroutine (UP [SN]) ***** 
-N[N] LP UP[SN] ;90,1
+N[N] ;***** Call Subroutine (UP [SN]) *****
+N[N] LP UP[SN]
 N[N] ;*************************************
 N[N] ;
 $----------------------------------------------------------------------------
@@ -901,7 +902,7 @@ $100 BEGIN subroutine. Use [SN] for subroutine number.
 $LET CNT_SUB = CNT_SUB + 1
 N[N] ;
 N[N] ;***** Begin of Contour (UP [SN]) *****
-N[N] LPS UP[SN] ;100,1
+N[N] LPS UP[SN]
 ''
 '' Ist DryRun bereits im selben UP durchgelaufen ?
 '' Falls ja dann springe ans Ende
@@ -918,14 +919,14 @@ $LET DRYRUN = SN
 [N] #DRYRUN%=[SN]
 [N] .PRENC[SN]
 ''
-N[N] PEND ;110,1
+N[N] PEND
 N[N] ;***************************************************
 $------------------- REFERENCE ZERO or ORIGIN SHIFT -------------------------
 $120 Origin shift. Use [OX] and [OY] for values to shift by)
-N[N] TRS(X[OX],Y[OY],Z[OZ]) ;120,1       'ORIGIN SHIFT
+N[N] TRS(X[OX],Y[OY],Z[OZ])
 $----------------------------------------------------------------------------
 $130 Cancel Origin shift.  [OX] and [OY] are values by which origin was shifted)
-N[N] TRS() ;130,1            'CANCEL ORIGIN SHIFT
+N[N] TRS()
 $----------------------- MACHINE TOOL COMPENSATION --------------------------
 NOTE: Codes given in $140 to $142 are assigned to TC as required for each path
 $140 Code to CANCEL Machine Tool Compensation
@@ -957,37 +958,37 @@ $------------------------ DRILLING/TAPPING CYCLES ---------------------------
 [ZS] = Safe Rapid level,   [ZM] = Material top.     All values are ABSOLUTE.
 
 $200 CANCEL drill/tapping cycle
-N[N] G1 Z[ZS] F5000 ;200,1
+N[N] G1 Z[ZS] F5000
 $205 First Hole in SUBROUTINE. NOTE $205/206 apply to ALL drill/peck etc cycles
-N[N] G0 X[AX] Y[AY] F500 ;205,1
-N[N] G0 Z[ZR] F500 ;205,2
-N[N] G1 Z[ZB] F[F/ 60.0] ;205,3
+N[N] G0 X[AX] Y[AY] F500
+N[N] G0 Z[ZR] F500
+N[N] G1 Z[ZB] F[F/ 60.0]
 $206 Next holes in Subroutine
-N[N] G0 X[AX] Y[AY] F500 ;206,1
-N[N] G0 Z[ZR] F500 ;206,2
-N[N] G1 Z[ZB] F[F/ 60.0] ;206,3
+N[N] G0 X[AX] Y[AY] F500
+N[N] G0 Z[ZR] F500
+N[N] G1 Z[ZB] F[F/ 60.0]
 $----------------------------------------------------------------------------
 DRILL cycle - traverse to next hole at SAFE RAPID level [ZS]
 $210 First Hole
-N[N] G0 X[AX] Y[AY] F500 ;210,1
-N[N] G1 Z[ZS] F5000 ;210,2
-N[N] G0 Z[ZR] F500 ;210,3
-N[N] G1 Z[ZB] F[F/ 60.0] ;210,4
+N[N] G0 X[AX] Y[AY] F500
+N[N] G1 Z[ZS] F5000
+N[N] G0 Z[ZR] F500
+N[N] G1 Z[ZB] F[F/ 60.0]
 $211 Next holes
-N[N] G1 Z[ZS] F5000 ;211,1
-N[N] G0 X[AX] Y[AY] F500 ;211,2
-N[N] G1 Z[ZB] F[F/ 60.0] ;211,3
+N[N] G1 Z[ZS] F5000
+N[N] G0 X[AX] Y[AY] F500
+N[N] G1 Z[ZB] F[F/ 60.0]
 $----------------------------------------------------------------------------
 DRILL cycle - traverse to next hole at RETRACT level [ZR]
 $214 First Hole
-N[N] G0 Z[ZS] F500 ;214,1
-N[N] G0 X[AX] Y[AY] F500 ;214,2
-N[N] G1 Z[ZB] F[F/ 60.0] ;214,3
+N[N] G0 Z[ZS] F500
+N[N] G0 X[AX] Y[AY] F500
+N[N] G1 Z[ZB] F[F/ 60.0]
 $215 Next holes
-N[N] G1 Z[ZR] F[F/ 60.0] ;215,1
-N[N] G0 X[AX] Y[AY] F500 ;215,2
-N[N] G1 Z[ZB] F[F/ 60.0] ;215,3
-N[N] G1 Z[ZR] F[F/ 60.0] ;215,4
+N[N] G1 Z[ZR] F[F/ 60.0]
+N[N] G0 X[AX] Y[AY] F500
+N[N] G1 Z[ZB] F[F/ 60.0]
+N[N] G1 Z[ZR] F[F/ 60.0]
 $----------------------------------------------------------------------------
 PECKING cycle - traverse to next hole at SAFE RAPID level [ZS]
 $220 First hole
