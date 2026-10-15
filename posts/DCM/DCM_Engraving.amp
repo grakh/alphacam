@@ -1,69 +1,25 @@
-$--POSTPROZESSOR https://hansmill.ru
-$--ÄNDERUNGEN: 2026-10-15 V1_18 M978 (Vakuum AUS) am Programmende entfernt
-$--ÄNDERUNGEN: 2026-10-15 V1_17 Jede Bohrung als eigener %SHAPE-Block
-$--ÄNDERUNGEN: 2026-10-15 V1_16 Bohrzyklen $200-$215 korrigiert (F5000 entfernt, Rueckzug vor XY, Eilgang auf ZR)
-$--ÄNDERUNGEN: 2026-10-15 V1_15 AEC/MTX-Code entfernt (MicroPerf, DryRun, DLA/SCLN, Messzyklus, Abfragen), ;-Zeilen in $220-$245 entfernt
-$--ÄNDERUNGEN: 2026-10-15 V1_14 Bereinigt: auskommentierter AEC-Code und Kommentare entfernt
-$--ÄNDERUNGEN: 2026-10-15 V1_13 Bahnlaenge als eine Zeile %PATH ... MM
-$--ÄNDERUNGEN: 2026-10-15 V1_12 Kommentare mit % statt ;, %SHAPE-Marken mit Satznummer
-$--ÄNDERUNGEN: 2026-10-15 V1_11 Marke .SHAPE[LOOP] und IHOC-Hoehenmessung auskommentiert
-$--ÄNDERUNGEN: 2026-10-06 V1_10 $50/$60: FF + BAHNMITTE = 2101 (vorher = 2, nie erfuellt)
-$--ÄNDERUNGEN: 2026-10-06 V1_9 XAPO/YAPO in $21
-$--ÄNDERUNGEN: 2026-10-06 V1_8 (Debug-Kommentare am Zeilenende entfernt)
-$--ÄNDERUNGEN: 2026-10-06 V1_7 (G2/G3 in $50/$60 korrigiert, OUTCIR 50,16, $ENDIF in $100, Kommentar $210)
-$--ÄNDERUNGEN: 2026-10-06 V1_6 (M988/M991/M979/M996 am Anfang, M987/M992/M978 am Ende aktiv)
-$--ÄNDERUNGEN: 2026-10-06 V1_5 (G0 mit F500 = 500 mm/s)
-$--ÄNDERUNGEN: 2026-10-06 V1_4 (IHOC-Marke ausserhalb Kontur, GOTO .PART in $50/$60 auskommentiert)
-$--ÄNDERUNGEN: 2026-10-06 V1_3 (Konturmarken %SHAPE n BEGIN / END)
-$--ÄNDERUNGEN: 2026-10-06 V1_2 (M3 nur einmal am Programmanfang)
-$--ÄNDERUNGEN: 2025-12-05 V1_1
-$------------------------- PROGRAM LEADING/TRAILING LINES -------------------
-$----------------------- File LEADING lines ----------------------------------------
-$----------------------- Main Program LEADING lines ----------------------------------------
-$----------------------- Main Program TRAILING lines ----------------------------------------
-$----------------------- File TRAILING Lines ----------------------------------------
-$----------------------- RAPID MOVES ----------------------------------------
-$----------------------- RAPID MOVE in XYZ ----------------------------------
-$----------------------- RAPID MOVE in Z ------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------- MACHINING FEED MOVES -------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$------------------------ TOOL CHANGES --------------------------------------
-$-------------------------- SUBROUTINES -------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$------------------- REFERENCE ZERO or ORIGIN SHIFT -------------------------
-$----------------------------------------------------------------------------
-$----------------------- MACHINE TOOL COMPENSATION --------------------------
-$----------------------- COOLANT OFF/MIST/FLOOD/TOOL CODES ------------------
-$------------------------ DRILLING/TAPPING CYCLES ---------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$-------------------------- GENERAL FORMATS ---------------------------------
-$-------------------------- NUMBER FORMATS ----------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$----------------------------------------------------------------------------
-$------------------------ RAPIDS and TOOL CHANGE TIMES ----------------------
-$--------------------------- USER VARIABLES ---------------------------------
-$-------------------------- USER DEFINED CODE -------------------------------
-$-------------------------- Post End ----------------------------------------
-$-------------------------- MAKRO-ATTRIBUTE
-$------------------------- PROGRAM LEADING/TRAILING LINES -------------------
-$5 Externes Programm einbinden
-$----------------------- File LEADING lines ----------------------------------------
+$--POSTPROCESSOR https://hansmill.ru  DCM engraving machine, controller HCFA HCQ9P-1700
+$--CHANGES: 2026-10-15 V1_20 No subroutines and no TRS origin shift: code output in full
+$--CHANGES: 2026-10-15 V1_19 Separators and template text removed, comments translated to English
+$--CHANGES: 2026-10-15 V1_18 M978 (vacuum OFF) removed at program end
+$--CHANGES: 2026-10-15 V1_17 Each drilled hole in its own %SHAPE block
+$--CHANGES: 2026-10-15 V1_16 Drill cycles $200-$215 fixed (F5000 removed, retract before XY, rapid to ZR)
+$--CHANGES: 2026-10-15 V1_15 AEC/MTX code removed (MicroPerf, DryRun, DLA/SCLN, measuring cycle, prompts), ; lines in $220-$245 removed
+$--CHANGES: 2026-10-15 V1_14 Cleanup: commented-out AEC code and comments removed
+$--CHANGES: 2026-10-15 V1_13 Path length as one line %PATH ... MM
+$--CHANGES: 2026-10-15 V1_12 Comments with % instead of ;, %SHAPE markers with line number
+$--CHANGES: 2026-10-15 V1_11 Label .SHAPE[LOOP] and IHOC height measurement disabled
+$--CHANGES: 2026-10-06 V1_10 $50/$60: FF + BAHNMITTE = 2101 (was = 2, never true)
+$--CHANGES: 2026-10-06 V1_9 XAPO/YAPO stored in $21
+$--CHANGES: 2026-10-06 V1_8 Debug comments at line end removed
+$--CHANGES: 2026-10-06 V1_7 G2/G3 in $50/$60 fixed, OUTCIR in 50,16, stray $ENDIF in $100, comment in $210
+$--CHANGES: 2026-10-06 V1_6 M988/M991/M979/M996 at start, M987/M992/M978 at end enabled
+$--CHANGES: 2026-10-06 V1_5 G0 with F500 (500 mm/s)
+$--CHANGES: 2026-10-06 V1_4 IHOC label moved out of contours, GOTO .PART in $50/$60 disabled
+$--CHANGES: 2026-10-06 V1_3 Contour markers %SHAPE n BEGIN / END
+$--CHANGES: 2026-10-06 V1_2 M3 only once at program start
+$--CHANGES: 2025-12-05 V1_1 Initial version
+$5 Call external program
 $10 File LEADING lines
 $LET STRECKE_NUTZEN = 0
 $LET NO_Z = 1
@@ -75,7 +31,6 @@ $LET HIDE = 0
 $LET TRCRAP = 0
 $LET OUTNC = 0
 $LET OUTCIR = 0
-$----------------------- Main Program LEADING lines ----------------------------------------
 $12 Main Program LEADING lines
 N[N] %****************************************************
 N[N] %** https://hansmill.ru                            **
@@ -95,7 +50,6 @@ N[N] M991 % Shutter Milling Spindle OPEN
 N[N] M979 % Control Vacuum ON
 N[N] M996 % Tool Cover DOWN
 N[N] %***************************************************
-$----------------------- Main Program TRAILING lines ----------------------------------------
 $15 Main Program TRAILING lines
 $IF SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] END
@@ -113,9 +67,7 @@ N[N] %
 N[N] %***** END OF PROGRAM ******************************
 N[N] %
 N[N] M30
-$----------------------- File TRAILING Lines ----------------------------------------
 $17 File TRAILING Lines
-$----------------------- RAPID MOVES ----------------------------------------
 $20 Rapid Move in XY (MILL/ROUTER/FLAME/LASER) or XZ (LATHE) only
 $MODAL ON
 $LET STRECKE_NUTZEN = 0
@@ -158,7 +110,6 @@ N[N] %SHAPE [SHAPE_NR] BEGIN
 $ENDIF
 $LET XAPO=AX
 $LET YAPO=AY
-$----------------------- RAPID MOVE in XYZ ----------------------------------
 $21 3D Rapid Move in XYZ (MILL/ROUTER ONLY)
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
@@ -168,7 +119,6 @@ $ENDIF
 $LET XAPO=AX
 $LET YAPO=AY
 N[N] G0 X[AX] Y[AY] Z[AZ] F500
-$----------------------- RAPID MOVE in Z ------------------------------------
 $25 Rapid Move in Z only (MILL etc)
 $IF NO_Z = 1
 $LET NO_Z = 0
@@ -194,11 +144,8 @@ $LET SHAPE_OPEN = 0
 $ENDIF
 $LET OUTNC = 0
 $LET OUTCIR = 0
-$----------------------------------------------------------------------------
 $30 Lines BEFORE a rapid move if Z levels are not used eg Laser or Geometry
-$----------------------------------------------------------------------------
 $35 Lines AFTER a rapid move if Z levels are not used eg Laser or Geometry
-$----------------------- MACHINING FEED MOVES -------------------------------
 $40  Machining FEED lines
 $MODAL ON
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + SQR(IX**2 + IY**2 + IZ**2)
@@ -265,7 +212,6 @@ $LET HIDE = 0
 $ENDIF
 $LET OUTNC = 0
 $MODAL OFF
-$----------------------------------------------------------------------------
 $50 Feed CW arc (APS will automatically limit arcs to 180 degrees maximum)
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + (AIA*PI*R/180)
 $IF MC = 1
@@ -322,7 +268,6 @@ $IF HIDE = 1
 $LET HIDE = 0
 $ENDIF
 $LET OUTNC = 0
-$----------------------------------------------------------------------------
 $60 Feed CCW arc (APS will automatically limit arcs to 180 degrees maximum)
 $LET STRECKE_NUTZEN = STRECKE_NUTZEN + (AIA*PI*R/180)
 $IF MC = 1
@@ -379,34 +324,15 @@ $IF HIDE = 1
 $LET HIDE = 0
 $ENDIF
 $LET OUTNC = 0
-$------------------------ TOOL CHANGES --------------------------------------
 $70 Cancel current tool.  Use [T] for current tool number if required.
 $75 Code for CLOCKWISE spindle rotation - entered into variable RT
 $76 Code for COUNTER-CLOCKWISE spindle rotation - entered into variable RT
 $80 Select new tool.  Use [T] for new tool number, [S] for spindle speed.
-$-------------------------- SUBROUTINES -------------------------------------
-$90 CALL subroutine.  Use [SN] for subroutine number.
-N[N] %***** Call Subroutine (UP [SN]) *****
-N[N] LP UP[SN]
-N[N] %*************************************
-N[N] %
-$----------------------------------------------------------------------------
-$100 BEGIN subroutine. Use [SN] for subroutine number.
-N[N] %
-N[N] %***** Begin of Contour (UP [SN]) *****
-N[N] LPS UP[SN]
-$----------------------------------------------------------------------------
-$110 END subroutine
-N[N] PEND
-N[N] %***************************************************
-$------------------- REFERENCE ZERO or ORIGIN SHIFT -------------------------
-$120 Origin shift. Use [OX] and [OY] for values to shift by)
-N[N] TRS(X[OX],Y[OY],Z[OZ])
-$----------------------------------------------------------------------------
-$130 Cancel Origin shift.  [OX] and [OY] are values by which origin was shifted)
-N[N] TRS()
-$----------------------- MACHINE TOOL COMPENSATION --------------------------
-NOTE: Codes given in $140 to $142 are assigned to TC as required for each path
+$90 CALL subroutine. Empty: no subroutines, code is output in full
+$100 BEGIN subroutine. Empty: no subroutines
+$110 END subroutine. Empty: no subroutines
+$120 Origin shift. Empty: shift is applied to coordinates
+$130 Cancel origin shift. Empty
 $140 Code to CANCEL Machine Tool Compensation
 G40
 $141 Code for LEFT Machine Tool Compensation
@@ -419,22 +345,10 @@ $146 Adjust G41/42 code at internal corners for tool radius (1 = Yes 0 = No)
 0
 $147 Comp can be applied on Rapid Approach (1 = Yes  0 = No)
 1
- ' $147=1 is only a flag to indicate that the code in $20 and $25 is correct if comp
- ' is asked for on the rapid approach. It does NOT force this to happen. For
- ' comp to be applied on rapid approach, the Apply Comp on Rapid Approach check
- ' box must be set to YES for each operation. If set, MC=1 in $20 & $25 and
- ' MC = 0 in $40, 50 and 60, so code for $40, 50 and 60 does not have to be changed
-$----------------------- COOLANT OFF/MIST/FLOOD/TOOL CODES ------------------
- Codes in $150 to $153 are assigned to CLT as required for each path
 $150 Code to Turn Coolant OFF
 $151 Code to apply MIST Coolant
 $152 Code to apply FLOOD Coolant
 $153 Code to apply THROUGH TOOL Coolant
-$------------------------ DRILLING/TAPPING CYCLES ---------------------------
-[ZR] = Retract level, the Z level to rapid down to before feed down begins.
-[ZB] = Z value of the bottom of the hole,   [ZP] = peck DISTANCE.
-[ZS] = Safe Rapid level,   [ZM] = Material top.     All values are ABSOLUTE.
-
 $200 CANCEL drill/tapping cycle
 N[N] G0 Z[ZS] F500
 $IF SHAPE_OPEN = 1
@@ -462,8 +376,6 @@ $LET SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] BEGIN
 N[N] G0 X[AX] Y[AY] F500
 N[N] G1 Z[ZB] F[F/ 60.0]
-$----------------------------------------------------------------------------
-DRILL cycle - traverse to next hole at SAFE RAPID level [ZS]
 $210 First Hole
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
@@ -486,8 +398,6 @@ N[N] %SHAPE [SHAPE_NR] BEGIN
 N[N] G0 X[AX] Y[AY] F500
 N[N] G0 Z[ZR] F500
 N[N] G1 Z[ZB] F[F/ 60.0]
-$----------------------------------------------------------------------------
-DRILL cycle - traverse to next hole at RETRACT level [ZR]
 $214 First Hole
 $IF SHAPE_OPEN = 0
 $LET SHAPE_NR = SHAPE_NR + 1
@@ -509,32 +419,18 @@ $LET SHAPE_OPEN = 1
 N[N] %SHAPE [SHAPE_NR] BEGIN
 N[N] G0 X[AX] Y[AY] F500
 N[N] G1 Z[ZB] F[F/ 60.0]
-$----------------------------------------------------------------------------
-PECKING cycle - traverse to next hole at SAFE RAPID level [ZS]
 $220 First hole
 $221 Next holes
-$----------------------------------------------------------------------------
-PECKING cycle - traverse to next hole at RETRACT level [ZR]
 $224 First hole
 $225 Next holes
-$----------------------------------------------------------------------------
-TAPPING cycle - traverse to next hole at SAFE RAPID level [ZS]
 $230 First hole
 $231 Next holes
-$----------------------------------------------------------------------------
-TAPPING cycle -  traverse to next hole at RETRACT level [ZR]
 $234 First hole
 $235 Next holes
-$----------------------------------------------------------------------------
-BORING/REAMING/SPOT FACE etc - traverse to next hole at SAFE RAPID level [ZS]
 $240 First Hole
 $241 Next holes
-$----------------------------------------------------------------------------
-BORING/REAMING/SPOT FACE etc - traverse to next hole at RETRACT level [ZS]
 $244 First Hole
 $245 Next holes
-$-------------------------- GENERAL FORMATS ---------------------------------
-Separate modal values with spaces.  More than one letter is OK eg X VX VY
 $500 Modal Text  (Will not be repeated in following lines)
 G0 G1 G2 G3 D1 FFW(0) FFW(1) ED1
 
@@ -550,13 +446,13 @@ $520 Put sub-routines at end of main program (1 = yes, 0 = put at start)
 1
 $525 Quadrant Limit arcs (1 = yes, 0 = Standard APS 180 degree limit)
 0
-$526 Ausgabe von Bögen >= 180 Grad als ein NC-Satz (1 = Ja, 0 = Nein)
+$526 Output arcs >= 180 degrees as one NC block (1 = yes, 0 = no)
 0
-$527 Bögen im Raum (Helix) als Liniensegmente generieren (1 = Ja, 0 = Nein)
+$527 Output helical arcs as line segments (1 = yes, 0 = no)
 0
 $530 Output arcs as straight line segments (1 = yes, 0 = no)
 0
-$531 Bögen als Linien ausgeben für Radien größer (bei 0 wird $531 ignorieren)
+$531 Output arcs as lines for radius greater than (0 = ignore $531)
 1000
 $532 If arcs are straight line segments, give chord error (mm or inches)
 .001
@@ -564,25 +460,24 @@ $540 Suppress Operations List, START and Comments in NC code (1 = yes, 0 = No)
 1
 $545 NC-pathes on hidden operations (1 = yes, 0 = No)
 1
-$560 4/5 ACHSEN Programmierpunkt: (1 = Spindeldrehpunkt, 0 = WKZ-Spitze)
+$560 4/5 AXIS programmed point (1 = spindle pivot point, 0 = tool tip)
 0
-$562 4/5 ACHSEN Spindelversatz in X vom Drehpunkt (Pivotpoint)
+$562 4/5 AXIS spindle offset in X from pivot point
 0
-$563 4/5 ACHSEN Spindelversatz in Y vom Drehpunkt (Pivotpoint)
+$563 4/5 AXIS spindle offset in Y from pivot point
 0
-$565 4/5 ACHSEN Spindellaenge (ohne Werkzeug!)
+$565 4/5 AXIS spindle length (without tool)
 0
-$570 4/5 ACHSEN Maximale Auslenkungum der Spindel in Grad
+$570 4/5 AXIS maximum spindle tilt in degrees
 0
-$575 4/5 ACHSEN Maximale Werkzeugwinkeländerung pro NC-Satz. 0 = kein Limit
+$575 4/5 AXIS maximum tool angle change per NC block (0 = no limit)
 .0001
-$577 4/5 ACHSEN Spiralförmige Bögen in 5-Achsbetrieb (1=JA, 0=NEIN) 
+$577 4/5 AXIS helical arcs in 5-axis mode (1 = yes, 0 = no)
 0
-$580 Horizontal Bearbeitungszentrum (1=JA, 0=NEIN)
+$580 Horizontal machining centre (1 = yes, 0 = no)
 1
-$582 Anwahl Arbeitsebene vor Werkzeugwechsel (1=Ja, 0=Nein, 2=$89)
+$582 Select work plane before tool change (1 = yes, 0 = no, 2 = $89)
 0
-$-------------------------- NUMBER FORMATS ----------------------------------
 $700 SUBROUTINE Number format
 6
 $701 Leading figures
@@ -591,7 +486,6 @@ $702 Figures after point
 0
 $705 Subroutine start number
 1
-$----------------------------------------------------------------------------
 $710 LINE NUMBER format
 8
 $711 Leading figures
@@ -602,21 +496,18 @@ $715 Line start number
 1
 $716 Line number increment
 1
-$----------------------------------------------------------------------------
 $720 X Y Z values format
 3
 $721 Leading figures
 0
 $722 Figures after point
 5
-$----------------------------------------------------------------------------
 $730 ARC centre/radius format
 3
 $731 Leading figures
 0
 $732 Figures after point
 5
-$----------------------------------------------------------------------------
 $740 SPINDLE SPEED format
 6
 $741 Leading figures
@@ -627,12 +518,8 @@ $743 Maximum Spindle Speed
 100000
 $744 Fixed Speeds (eg 100, 200, 1000, 2000 ...      0 = speed is variable)
 0
-$NOTE: Fixed speeds can use more than one line. 80 chars per line maximum
-       APS will select the nearest lower value to the calculated value.
-       $745 below only applies if $744 is 0 - ie variable speed range.
 $745 Round Speed Up/Down to Nearest: (.1 or 1 or 10 ...  0 = don't round)
 100
-$----------------------------------------------------------------------------
 $750 MACHINING FEED format
 2
 $751 Leading figures
@@ -643,28 +530,18 @@ $753 Maximum Feed Rate (Use mm/min or in/min as appropriate for this Post)
 6000  MM/min
 $755 Round Feed Up/Down to Nearest: (.1 or 1 or 10 ...  0 = don't round)
 10
-$----------------------------------------------------------------------------
 $760 TOOL NUMBER format
 2
 $761 Leading figures
 0
 $762 Figures after point
 0
-$------------------------ RAPIDS and TOOL CHANGE TIMES ----------------------
-Use mm/min or in/min as appropriate for this Post.
 $900 XY Rapid Speed
 50000 MM/min
 $901 Z Rapid Speed
 10000 MM/min
 $902 Time to change tool (seconds)
 60
-$--------------------------- USER VARIABLES ---------------------------------
-ALL user variables must be declared. Variable names can be up to 20 chars.
-Prompts can be up to 50 chars max and can include a default inside < >.
-Put (" ") as format for a text variable. Put ( ) as the format of any numeric
-variable which is to have the same format as X Y (Z) moves. If a different
-format is required, put (Format, Lead figs, Trail figs) eg (6,0,0) = Integer.
-
 $1000 
 COMP1 ("")
 STRECKE_NUTZEN ()
@@ -684,13 +561,6 @@ OUTCIR()
 XAPO ()
 YAPO ()
 PostOutputExtension ("") = "npg"
-$-------------------------- USER DEFINED CODE -------------------------------
-Prompts up to 50 chars max. Variable names up to 20 chars. Any $number in the
-range $1100 - $1119 can be used for each definition. First line after $number
-appears in the first dialog box. Lines up to first $ line appear in second
-dialog box. Lines up to next $ line will be added/inserted in NC program.
-$-------------------------- Post End ----------------------------------------
 $1200
-$-------------------------- MAKRO-ATTRIBUTE
 $3000
 $ ---------------------- End of Post
