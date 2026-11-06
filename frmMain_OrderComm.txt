@@ -22,8 +22,11 @@ Private Const ZAKAZ_ROOT As String = "\\storage\Zakaz\"
 
 ' --- При открытии: номера-кандидаты из имени чертежа (split по "_") ---
 Private Sub UserForm_Activate()
-    ' Всё поле вывода - жирным (отдельные строки в TextBox выделить нельзя)
-    TextBox1.Font.Bold = True
+    ' Поле вывода: обычный шрифт, весь текст красным, собственный скролл
+    TextBox1.MultiLine = True
+    TextBox1.ScrollBars = fmScrollBarsVertical   ' свой вертикальный скролл поля
+    TextBox1.Font.Bold = False
+    TextBox1.ForeColor = vbRed                   ' весь текст красным
 
     Dim fl As Boolean, Sp As Variant
     fl = False
