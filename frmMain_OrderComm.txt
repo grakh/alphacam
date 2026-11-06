@@ -22,6 +22,9 @@ Private Const ZAKAZ_ROOT As String = "\\storage\Zakaz\"
 
 ' --- При открытии: номера-кандидаты из имени чертежа (split по "_") ---
 Private Sub UserForm_Activate()
+    ' Всё поле вывода - жирным (отдельные строки в TextBox выделить нельзя)
+    TextBox1.Font.Bold = True
+
     Dim fl As Boolean, Sp As Variant
     fl = False
     ComboBox1.Clear
@@ -118,9 +121,8 @@ Private Sub FillComments()
 
     ' --- Сборка текста с разделителями ---
     Dim s As String
-    s = "Заказ № " & o
-    If Len(orderName) > 0 Then s = s & "   " & orderName
-    s = s & vbCrLf
+    s = Divider("Заказ № " & o) & vbCrLf
+    If Len(orderName) > 0 Then s = s & orderName & vbCrLf
     If Len(buyer) > 0 Then s = s & buyer & vbCrLf
     If Len(dateMake) > 0 Then s = s & "Дата изготовления: " & dateMake & vbCrLf
     s = s & vbCrLf
@@ -144,13 +146,16 @@ Private Sub FillComments()
     TextBox1.Value = s
 End Sub
 
-' Заголовок-разделитель: "Контрагент --------------------"
+' Заголовок-разделитель ЗАГЛАВНЫМИ с "=":
+'   === КОНТРАГЕНТ ========================
 Private Function Divider(ByVal title As String) As String
     Const WIDTH As Integer = 46
+    Dim hdr As String
+    hdr = "=== " & UCase(title) & " "
     Dim n As Integer
-    n = WIDTH - Len(title) - 1
+    n = WIDTH - Len(hdr)
     If n < 3 Then n = 3
-    Divider = title & " " & String(n, "-")
+    Divider = hdr & String(n, "=")
 End Function
 
 Private Function BuildSpecPath(ByVal o As String) As String
