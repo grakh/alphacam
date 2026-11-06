@@ -1,0 +1,170 @@
+' ============================================================
+' frmMain - код формы add-in "OrderComm"
+' Показ комментариев к заказу из XML спецификации.
+'
+' Меню регистрируется в модуле:
+'   InitAlphacamAddIn -> пункт "OrderComm" (меню "Cutting") -> ShowfrmMain
+'   ShowfrmMain: Load frmMain : frmMain.Show
+'
+' Контролы формы (свойство (Name)):
+'   ComboBox1  - номер заказа (заполняется из имени чертежа)
+'   btnShow    - кнопка "Показать"
+'   btnCancel  - кнопка "Отменить"
+'   TextBox1   - большой вывод (MultiLine=True, ScrollBars=2 вертикальный)
+'   3 метки-легенды - статичные, кодом не трогаются
+'
+' Вывод одним цветом, секции разделены "Заголовок --------".
+' ============================================================
+Option Explicit
+
+' Базовая папка заказов (как в посте OutNC)
+Private Const ZAKAZ_ROOT As String = "\\storage\Zakaz\"
+
+' --- При открытии: номера-кандидаты из имени чертежа (split по "_") ---
+Private Sub UserForm_Activate()
+    Dim fl As Boolean, Sp As Variant
+    fl = False
+    ComboBox1.Clear
+    For Each Sp In Split(ActiveDrawing.Name, "_")
+        If fl Then ComboBox1.AddItem Sp
+        fl = True
+    Next Sp
+    ' если есть первый числовой кандидат > 1000 - подставим и покажем
+    Dim i As Long
+    For i = 0 To ComboBox1.ListCount - 1
+        If IsNumeric(ComboBox1.List(i)) Then
+            If CDbl(ComboBox1.List(i)) > 1000 Then
+                ComboBox1.ListIndex = i
+                FillComments
+                Exit For
+            End If
+        End If
+    Next i
+End Sub
+
+Private Sub btnShow_Click()
+    FillComments
+End Sub
+
+Private Sub ComboBox1_Change()
+    FillComments            ' авто-показ при выборе/вводе номера
+End Sub
+
+Private Sub btnCancel_Click()
+    Unload Me
+End Sub
+
+' ================= Чтение и вывод комментариев =================
+Private Sub FillComments()
+    Dim o As String
+    o = Trim(ComboBox1.Value)
+    If Len(o) = 0 Then Exit Sub
+    If Not IsNumeric(o) Then
+        TextBox1.Value = "Номер заказа должен быть числом."
+        Exit Sub
+    End If
+    If CDbl(o) <= 1000 Then Exit Sub
+
+    Dim xmlPath As String
+    xmlPath = BuildSpecPath(o)
+
+    On Error Resume Next
+    Dim exists As Boolean
+    exists = (Dir(xmlPath, vbNormal) <> "")
+    If Not exists Then exists = (Dir(xmlPath, vbSystem) <> "")
+    On Error GoTo 0
+
+    If Not exists Then
+        TextBox1.Value = "Файл спецификации не найден:" & vbCrLf & xmlPath
+        Exit Sub
+    End If
+
+    Dim XDoc As Object
+    Set XDoc = CreateObject("MSXML2.DOMDocument")
+    XDoc.async = False
+    XDoc.validateOnParse = False
+    If Not XDoc.Load(xmlPath) Then
+        TextBox1.Value = "Не удалось прочитать XML:" & vbCrLf & xmlPath
+        Set XDoc = Nothing
+        Exit Sub
+    End If
+
+    Dim root As Object
+    Set root = XDoc.documentElement        ' <Спецификация>
+    If root Is Nothing Then
+        TextBox1.Value = "Пустой или некорректный XML."
+        Set XDoc = Nothing
+        Exit Sub
+    End If
+
+    Dim orderName As String, buyer As String, dateMake As String, approved As String
+    orderName = GetAttr(root, "НаименованиеЗаказа")
+    buyer = GetAttr(root, "Покупатель")
+    dateMake = GetAttr(root, "ДатаИзготовления")
+    approved = GetAttr(root, "УтвердилСпецификацию")
+
+    Dim cContr As String, cComm As String
+    cContr = GetAttr(root, "КомментарийКонтрагента")
+    cComm = GetAttr(root, "Комментарий")
+
+    Dim cUser As String, cUserTime As String
+    Dim un As Object
+    Set un = root.selectSingleNode("ПользовательскийКомментарий")
+    If Not un Is Nothing Then
+        cUser = Trim(un.Text)
+        cUserTime = GetAttr(un, "time")
+    End If
+    Set XDoc = Nothing
+
+    ' --- Сборка текста с разделителями ---
+    Dim s As String
+    s = "Заказ № " & o
+    If Len(orderName) > 0 Then s = s & "   " & orderName
+    s = s & vbCrLf
+    If Len(buyer) > 0 Then s = s & buyer & vbCrLf
+    If Len(dateMake) > 0 Then s = s & "Дата изготовления: " & dateMake & vbCrLf
+    s = s & vbCrLf
+
+    s = s & Divider("Контрагент") & vbCrLf
+    s = s & IIf(Len(cContr) > 0, cContr, "(нет)") & vbCrLf & vbCrLf
+
+    s = s & Divider("Комментарий") & vbCrLf
+    s = s & IIf(Len(cComm) > 0, cComm, "(нет)") & vbCrLf & vbCrLf
+
+    Dim userHdr As String
+    userHdr = "Пользователь"
+    If Len(cUserTime) > 0 Then userHdr = userHdr & " " & cUserTime
+    s = s & Divider(userHdr) & vbCrLf
+    s = s & IIf(Len(cUser) > 0, cUser, "(нет)")
+
+    If Len(approved) > 0 Then
+        s = s & vbCrLf & vbCrLf & Divider("Утвердил") & vbCrLf & approved
+    End If
+
+    TextBox1.Value = s
+End Sub
+
+' Заголовок-разделитель: "Контрагент --------------------"
+Private Function Divider(ByVal title As String) As String
+    Const WIDTH As Integer = 46
+    Dim n As Integer
+    n = WIDTH - Len(title) - 1
+    If n < 3 Then n = 3
+    Divider = title & " " & String(n, "-")
+End Function
+
+Private Function BuildSpecPath(ByVal o As String) As String
+    Dim prefix As String
+    prefix = Left(o, Len(o) - 3)
+    BuildSpecPath = ZAKAZ_ROOT & prefix & "000-" & prefix & "999\" & _
+                    o & "\XML\specification_" & o & ".xml"
+End Function
+
+Private Function GetAttr(node As Object, ByVal attrName As String) As String
+    GetAttr = ""
+    On Error Resume Next
+    Dim a As Object
+    Set a = node.Attributes.getNamedItem(attrName)
+    If Not a Is Nothing Then GetAttr = Trim(a.Text)
+    On Error GoTo 0
+End Function
