@@ -115,12 +115,26 @@ Private Sub FillComments()
     cContr = GetAttr(root, "КомментарийКонтрагента")
     cComm = GetAttr(root, "Комментарий")
 
-    Dim cUser As String, cUserTime As String
-    Dim un As Object
-    Set un = root.selectSingleNode("ПользовательскийКомментарий")
-    If Not un Is Nothing Then
-        cUser = Trim(un.Text)
-        cUserTime = GetAttr(un, "time")
+    ' Пользовательских комментариев может быть НЕСКОЛЬКО (история) -
+    ' собираем все узлы, выводим каждый как "[время] текст".
+    Dim colUser As Object
+    Set colUser = root.selectNodes("ПользовательскийКомментарий")
+
+    Dim userBlock As String
+    userBlock = ""
+    If Not colUser Is Nothing Then
+        Dim un As Object
+        For Each un In colUser
+            Dim t As String, txt As String
+            t = GetAttr(un, "time")
+            txt = Trim(un.Text)
+            If Len(userBlock) > 0 Then userBlock = userBlock & vbCrLf
+            If Len(t) > 0 Then
+                userBlock = userBlock & "[" & t & "] " & txt
+            Else
+                userBlock = userBlock & txt
+            End If
+        Next
     End If
     Set XDoc = Nothing
 
@@ -138,11 +152,8 @@ Private Sub FillComments()
     s = s & Divider("Комментарий") & vbCrLf
     s = s & IIf(Len(cComm) > 0, cComm, "(нет)") & vbCrLf & vbCrLf
 
-    Dim userHdr As String
-    userHdr = "Пользователь"
-    If Len(cUserTime) > 0 Then userHdr = userHdr & " " & cUserTime
-    s = s & Divider(userHdr) & vbCrLf
-    s = s & IIf(Len(cUser) > 0, cUser, "(нет)")
+    s = s & Divider("Пользователь") & vbCrLf
+    s = s & IIf(Len(userBlock) > 0, userBlock, "(нет)")
 
     If Len(approved) > 0 Then
         s = s & vbCrLf & vbCrLf & Divider("Утвердил") & vbCrLf & approved
