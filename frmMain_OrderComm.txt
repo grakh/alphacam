@@ -22,11 +22,13 @@ Private Const ZAKAZ_ROOT As String = "\\storage\Zakaz\"
 
 ' --- ѕри открытии: номера-кандидаты из имени чертежа (split по "_") ---
 Private Sub UserForm_Activate()
-    ' ѕоле вывода: обычный шрифт, весь текст красным, собственный скролл
+    ' ѕоле вывода: обычный шрифт, весь текст красным, собственный скролл.
+    ' ScrollBars = 2 (fmScrollBarsVertical) задано числом, чтобы не зависеть
+    ' от разрешени€ констант MSForms на другой машине.
     TextBox1.MultiLine = True
-    TextBox1.ScrollBars = fmScrollBarsVertical   ' свой вертикальный скролл пол€
+    TextBox1.ScrollBars = 2                       ' вертикальный скролл пол€
     TextBox1.Font.Bold = False
-    TextBox1.ForeColor = vbRed                   ' весь текст красным
+    TextBox1.ForeColor = vbRed                    ' весь текст красным (RGB 255,0,0)
 
     Dim fl As Boolean, Sp As Variant
     fl = False
