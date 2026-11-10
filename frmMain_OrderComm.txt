@@ -64,6 +64,9 @@ End Sub
 
 ' ================= Чтение и вывод комментариев =================
 Private Sub FillComments()
+    ' По умолчанию кнопка обычного цвета (сбрасываем прошлый флаг)
+    btnShow.BackColor = &H8000000F          ' стандартный цвет кнопки
+
     Dim o As String
     o = Trim(ComboBox1.Value)
     If Len(o) = 0 Then Exit Sub
@@ -137,6 +140,17 @@ Private Sub FillComments()
         Next
     End If
     Set XDoc = Nothing
+
+    ' --- Флаг: есть ли комментарии -> красим кнопку ---
+    ' Учитываем все три типа. Если нужно реагировать только на
+    ' контрагента/обычный (без истории пользователя) - убери " Or Len(userBlock) > 0".
+    Dim hasComments As Boolean
+    hasComments = (Len(cContr) > 0) Or (Len(cComm) > 0) Or (Len(userBlock) > 0)
+    If hasComments Then
+        btnShow.BackColor = vbRed            ' есть комментарии - загляни!
+    Else
+        btnShow.BackColor = &H8000000F       ' нет - обычный цвет
+    End If
 
     ' --- Сборка текста с разделителями ---
     Dim s As String
