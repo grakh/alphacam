@@ -43,7 +43,14 @@ Private Sub UserForm_Activate()
             Dim num As String
             num = Trim(Sp)
             If IsNumeric(num) Then
-                If CDbl(num) > 1000 And OrderHasComments(num) Then
+                ' ВАЖНО: And в VBA не короткозамкнут - проверяем вложенно,
+                ' иначе OrderHasComments вызовется и для коротких номеров.
+                Dim marked As Boolean
+                marked = False
+                If CDbl(num) > 1000 Then
+                    If OrderHasComments(num) Then marked = True
+                End If
+                If marked Then
                     ComboBox1.AddItem "#" & num
                 Else
                     ComboBox1.AddItem num
@@ -80,6 +87,10 @@ End Sub
 ' Есть ли у заказа хоть один комментарий (быстрая проверка для списка)
 Private Function OrderHasComments(ByVal o As String) As Boolean
     OrderHasComments = False
+    ' Защита: короткие/нечисловые номера пропускаем (Len(o)-3 был бы < 0)
+    If Not IsNumeric(o) Then Exit Function
+    If CDbl(o) <= 1000 Then Exit Function
+
     Dim xmlPath As String
     xmlPath = BuildSpecPath(o)
 
