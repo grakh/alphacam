@@ -118,27 +118,28 @@ Private Sub FillComments()
     cContr = GetAttr(root, "КомментарийКонтрагента")
     cComm = GetAttr(root, "Комментарий")
 
-    ' Пользовательских комментариев может быть НЕСКОЛЬКО (история) -
-    ' собираем все узлы, выводим каждый как "[время] текст".
-    Dim colUser As Object
-    Set colUser = root.selectNodes("ПользовательскийКомментарий")
-
+    ' Пользовательских комментариев может быть НЕСКОЛЬКО (история).
+    ' НЕ используем selectNodes с кириллицей в XPath - на части машин
+    ' MSXML (XSLPattern) выдаёт "неизвестный знак в строке запроса".
+    ' Вместо этого обходим дочерние узлы и сравниваем имя - работает везде.
     Dim userBlock As String
     userBlock = ""
-    If Not colUser Is Nothing Then
-        Dim un As Object
-        For Each un In colUser
-            Dim t As String, txt As String
-            t = GetAttr(un, "time")
-            txt = Trim(un.Text)
-            If Len(userBlock) > 0 Then userBlock = userBlock & vbCrLf
-            If Len(t) > 0 Then
-                userBlock = userBlock & "[" & t & "] " & txt
-            Else
-                userBlock = userBlock & txt
+    Dim un As Object
+    For Each un In root.childNodes
+        If un.nodeType = 1 Then                       ' 1 = элемент
+            If un.nodeName = "ПользовательскийКомментарий" Then
+                Dim t As String, txt As String
+                t = GetAttr(un, "time")
+                txt = Trim(un.Text)
+                If Len(userBlock) > 0 Then userBlock = userBlock & vbCrLf
+                If Len(t) > 0 Then
+                    userBlock = userBlock & "[" & t & "] " & txt
+                Else
+                    userBlock = userBlock & txt
+                End If
             End If
-        Next
-    End If
+        End If
+    Next
     Set XDoc = Nothing
 
     ' --- Флаг: есть ли комментарии -> красим кнопку ---
