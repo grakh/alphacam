@@ -64,8 +64,7 @@ End Sub
 
 ' ================= Чтение и вывод комментариев =================
 Private Sub FillComments()
-    ' По умолчанию поле номера обычного цвета (сбрасываем прошлый флаг)
-    ComboBox1.BackColor = &H80000005        ' стандартный фон (белый)
+    ' По умолчанию текст номера обычного цвета (сбрасываем прошлый флаг)
     ComboBox1.ForeColor = &H80000008        ' стандартный цвет текста
 
     Dim o As String
@@ -149,8 +148,7 @@ Private Sub FillComments()
     Dim hasComments As Boolean
     hasComments = (Len(cContr) > 0) Or (Len(cComm) > 0) Or (Len(userBlock) > 0)
     If hasComments Then
-        ComboBox1.BackColor = vbRed          ' есть комментарии - номер подсвечен
-        ComboBox1.ForeColor = vbWhite        ' белый текст поверх красного
+        ComboBox1.ForeColor = vbRed          ' есть комментарии - номер красным
     End If
 
     ' --- Сборка текста с разделителями ---
