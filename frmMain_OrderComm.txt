@@ -33,25 +33,90 @@ Private Sub UserForm_Activate()
     TextBox1.Font.Bold = False
     TextBox1.ForeColor = vbRed                    ' весь текст красным (RGB 255,0,0)
 
+    ' Номера-кандидаты из имени чертежа. Сразу помечаем "#" те,
+    ' у которых есть комментарии - чтобы видно было прямо в списке.
     Dim fl As Boolean, Sp As Variant
     fl = False
     ComboBox1.Clear
     For Each Sp In Split(ActiveDrawing.Name, "_")
-        If fl Then ComboBox1.AddItem Sp
-        fl = True
-    Next Sp
-    ' если есть первый числовой кандидат > 1000 - подставим и покажем
-    Dim i As Long
-    For i = 0 To ComboBox1.ListCount - 1
-        If IsNumeric(ComboBox1.List(i)) Then
-            If CDbl(ComboBox1.List(i)) > 1000 Then
-                ComboBox1.ListIndex = i
-                FillComments
-                Exit For
+        If fl Then
+            Dim num As String
+            num = Trim(Sp)
+            If IsNumeric(num) Then
+                If CDbl(num) > 1000 And OrderHasComments(num) Then
+                    ComboBox1.AddItem "#" & num
+                Else
+                    ComboBox1.AddItem num
+                End If
+            Else
+                ComboBox1.AddItem num
             End If
         End If
+        fl = True
+    Next Sp
+
+    ' Выбираем первый помеченный "#" (с комментариями), иначе первый
+    ' числовой > 1000 - и сразу показываем.
+    Dim i As Long, chosen As Long
+    chosen = -1
+    For i = 0 To ComboBox1.ListCount - 1
+        If Left(ComboBox1.List(i), 1) = "#" Then chosen = i: Exit For
     Next i
+    If chosen = -1 Then
+        For i = 0 To ComboBox1.ListCount - 1
+            Dim it As String
+            it = ComboBox1.List(i)
+            If IsNumeric(it) Then
+                If CDbl(it) > 1000 Then chosen = i: Exit For
+            End If
+        Next i
+    End If
+    If chosen >= 0 Then
+        ComboBox1.ListIndex = chosen
+        FillComments
+    End If
 End Sub
+
+' Есть ли у заказа хоть один комментарий (быстрая проверка для списка)
+Private Function OrderHasComments(ByVal o As String) As Boolean
+    OrderHasComments = False
+    Dim xmlPath As String
+    xmlPath = BuildSpecPath(o)
+
+    On Error Resume Next
+    Dim ex As Boolean
+    ex = (Dir(xmlPath, vbNormal) <> "")
+    If Not ex Then ex = (Dir(xmlPath, vbSystem) <> "")
+    On Error GoTo 0
+    If Not ex Then Exit Function
+
+    Dim XDoc As Object
+    Set XDoc = CreateObject("MSXML2.DOMDocument")
+    XDoc.async = False
+    XDoc.validateOnParse = False
+    If Not XDoc.Load(xmlPath) Then Exit Function
+
+    Dim root As Object
+    Set root = XDoc.documentElement
+    If root Is Nothing Then Exit Function
+
+    Dim has As Boolean
+    has = (Len(GetAttr(root, "КомментарийКонтрагента")) > 0) _
+       Or (Len(GetAttr(root, "Комментарий")) > 0)
+    If Not has Then
+        Dim un As Object
+        For Each un In root.childNodes
+            If un.nodeType = 1 Then
+                If un.nodeName = "ПользовательскийКомментарий" Then
+                    If Len(Trim(un.Text)) > 0 Then has = True: Exit For
+                End If
+            End If
+        Next
+    End If
+
+    OrderHasComments = has
+    Set XDoc = Nothing
+End Function
 
 Private Sub btnShow_Click()
     FillComments
@@ -146,19 +211,8 @@ Private Sub FillComments()
     Next
     Set XDoc = Nothing
 
-    ' --- Флаг: есть ли комментарии -> ставим "#" перед номером ---
-    ' Учитываем все три типа. Если нужно реагировать только на
-    ' контрагента/обычный (без истории пользователя) - убери " Or Len(userBlock) > 0".
-    Dim hasComments As Boolean
-    hasComments = (Len(cContr) > 0) Or (Len(cComm) > 0) Or (Len(userBlock) > 0)
-
-    Dim shown As String
-    If hasComments Then shown = "#" & o Else shown = o
-    If ComboBox1.Value <> shown Then
-        updating = True
-        ComboBox1.Value = shown              ' "#" перед номером = есть комментарии
-        updating = False
-    End If
+    ' Пометка "#" уже проставлена в списке при открытии (UserForm_Activate).
+    ' Здесь номер только читаем (маркер "#" отрезан выше).
 
     ' --- Сборка текста с разделителями ---
     Dim s As String
